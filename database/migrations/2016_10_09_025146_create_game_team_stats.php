@@ -32,12 +32,16 @@ class CreateGameTeamStats extends Migration
             $table->integer('vilemaw_kills');
             $table->integer('rift_herald_kills');
             $table->integer('dominion_victory_score');
-            $table->integer('ban_1');
-            $table->integer('ban_1_pick');
-            $table->integer('ban_2');
-            $table->integer('ban_2_pick');
-            $table->integer('ban_3');
-            $table->integer('ban_3_pick');
+            $table->integer('ban_1')->nullable();
+            $table->integer('ban_1_pick')->nullable();
+            $table->integer('ban_2')->nullable();
+            $table->integer('ban_2_pick')->nullable();
+            $table->integer('ban_3')->nullable();
+            $table->integer('ban_3_pick')->nullable();
+            $table->integer('ban_4')->nullable();
+            $table->integer('ban_4_pick')->nullable();
+            $table->integer('ban_5')->nullable();
+            $table->integer('ban_5_pick')->nullable();
         });
 
     }

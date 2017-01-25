@@ -80,6 +80,17 @@ class ScrapeController extends Controller
         return $input;
     }
 
+    protected function pryArr($array, $key, $attr) 
+    {
+        if(isset($array[$key])) {
+            if(isset($array[$key]->$attr)) {
+                return $array[$key]->$attr;
+            }
+        }
+
+        return null;
+    }
+
     protected function pry($object, $path)
     {
         $parts = explode('->', $path);

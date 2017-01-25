@@ -13,7 +13,7 @@ use Log;
 class DDragonController extends ScrapeController
 {
     protected $baseUri = 'http://ddragon.leagueoflegends.com/cdn/';
-    protected $apiVersion = '6.21.1';
+    protected $apiVersion = '7.2.1';
     protected $tailUri = '/data/en_US/';
 
     public function scrape($apiVersion = null)
@@ -30,7 +30,7 @@ class DDragonController extends ScrapeController
 
     private function url($group, $full)
     {
-        return 'http://ddragon.leagueoflegends.com/cdn/' . $this->apiVersion . "/img/" . $group . '/' . $full;
+        return 'http://ddragon.leagueoflegends.com/cdn/' . $this->apiVersion . '/img/' . $group . '/' . $full;
     }
 
     private function insertProfileIcons()

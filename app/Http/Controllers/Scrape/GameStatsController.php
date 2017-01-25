@@ -24,7 +24,7 @@ class GameStatsController extends ScrapeController
 					->get();
 
 		foreach ($games as $game) {
-			
+
 			$gameId = $game->game_id;
 			$gameHash = $game->game_hash;
 			$gameRealm = $game->game_realm;
@@ -35,7 +35,6 @@ class GameStatsController extends ScrapeController
 
 			try {
 	    		$response = $this->client->request('GET', 'v1/stats/game/' . $gameRealm . '/' . $gameId . '?gameHash=' . $gameHash);
-	    		echo 'v1/stats/game/' . $gameRealm . '/' . $gameId . '?gameHash=' . $gameHash . "\n";
 		    } catch (ClientException $e) {
 			    Log::error($e->getMessage()); return;
 		    } catch (ServerException $e) {
@@ -79,12 +78,16 @@ class GameStatsController extends ScrapeController
 			    	'vilemaw_kills'			=> $team->vilemawKills,
 			    	'rift_herald_kills'		=> $team->riftHeraldKills,
 			    	'dominion_victory_score'=> $team->dominionVictoryScore,
-			    	'ban_1'					=> $team->bans[0]->championId,
-			    	'ban_1_pick'			=> $team->bans[0]->pickTurn,
-			    	'ban_2'					=> $team->bans[1]->championId,
-			    	'ban_2_pick'			=> $team->bans[1]->pickTurn,
-			    	'ban_3'					=> $team->bans[2]->championId,
-			    	'ban_3_pick'			=> $team->bans[2]->pickTurn
+			    	'ban_1'					=> $this->pryArr($team->bans, 0, 'championId'),
+			    	'ban_1_pick'			=> $this->pryArr($team->bans, 0, 'pickTurn'),
+			    	'ban_2'					=> $this->pryArr($team->bans, 1, 'championId'),
+			    	'ban_2_pick'			=> $this->pryArr($team->bans, 1, 'pickTurn'),
+			    	'ban_3'					=> $this->pryArr($team->bans, 2, 'championId'),
+			    	'ban_3_pick'			=> $this->pryArr($team->bans, 2, 'pickTurn'),
+			    	'ban_4'					=> $this->pryArr($team->bans, 3, 'championId'),
+			    	'ban_4_pick'			=> $this->pryArr($team->bans, 3, 'pickTurn'),
+			    	'ban_5'					=> $this->pryArr($team->bans, 4, 'championId'),
+			    	'ban_5_pick'			=> $this->pryArr($team->bans, 4, 'pickTurn'),
 		    	];
 		    }
 
@@ -98,10 +101,12 @@ class GameStatsController extends ScrapeController
 			    	'participant_id'		=> $this->fixParticipant($swapSides, $player->teamId, $player->participantId),
 			    	'team_id'				=> $this->fixSide($swapSides, $player->teamId),
 			    	'champion_id'			=> $player->championId,
+			    	'role'					=> strtolower($player->timeline->role),
+			    	'lane'					=> strtolower($player->timeline->lane),
 			    	'spell1_id'				=> $player->spell1Id,
 			    	'spell2_id'				=> $player->spell2Id,
 			    	'item_0'				=> $this->cleanItem($player->stats->item0),
-			    	'item_1'				=> $this->cleanItem($player->stats->item2),
+			    	'item_1'				=> $this->cleanItem($player->stats->item1),
 			    	'item_2'				=> $this->cleanItem($player->stats->item2),
 			    	'item_3'				=> $this->cleanItem($player->stats->item3),
 			    	'item_4'				=> $this->cleanItem($player->stats->item4),

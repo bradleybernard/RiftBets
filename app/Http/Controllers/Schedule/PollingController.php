@@ -322,12 +322,16 @@ class PollingController extends ScrapeController
                     'vilemaw_kills'         => $team->vilemawKills,
                     'rift_herald_kills'     => $team->riftHeraldKills,
                     'dominion_victory_score'=> $team->dominionVictoryScore,
-                    'ban_1'                 => $team->bans[0]->championId,
-                    'ban_1_pick'            => $team->bans[0]->pickTurn,
-                    'ban_2'                 => $team->bans[1]->championId,
-                    'ban_2_pick'            => $team->bans[1]->pickTurn,
-                    'ban_3'                 => $team->bans[2]->championId,
-                    'ban_3_pick'            => $team->bans[2]->pickTurn
+                    'ban_1'                 => $this->pryArr($team->bans, 0, 'championId'),
+                    'ban_1_pick'            => $this->pryArr($team->bans, 0, 'pickTurn'),
+                    'ban_2'                 => $this->pryArr($team->bans, 1, 'championId'),
+                    'ban_2_pick'            => $this->pryArr($team->bans, 1, 'pickTurn'),
+                    'ban_3'                 => $this->pryArr($team->bans, 2, 'championId'),
+                    'ban_3_pick'            => $this->pryArr($team->bans, 2, 'pickTurn'),
+                    'ban_4'                 => $this->pryArr($team->bans, 3, 'championId'),
+                    'ban_4_pick'            => $this->pryArr($team->bans, 3, 'pickTurn'),
+                    'ban_5'                 => $this->pryArr($team->bans, 4, 'championId'),
+                    'ban_5_pick'            => $this->pryArr($team->bans, 4, 'pickTurn'),
                 ];
             }
 
@@ -340,6 +344,8 @@ class PollingController extends ScrapeController
                     'participant_id'        => $player->participantId,
                     'team_id'               => $player->teamId,
                     'champion_id'           => $player->championId,
+                    'role'                  => strtolower($player->timeline->role),
+                    'lane'                  => strtolower($player->timeline->lane),
                     'spell1_id'             => $player->spell1Id,
                     'spell2_id'             => $player->spell2Id,
                     'item_0'                => $this->cleanItem($player->stats->item0),
