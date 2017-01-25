@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTable extends Migration
+class CreateTournamentRosters extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,14 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('rosters', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('facebook_id')->unique();
+            $table->string('api_tournament_id');
+            $table->string('api_id_long');
+            $table->integer('api_team_id')->nullable();
             $table->string('name');
-            $table->string('email')->unique()->nullable();
-            $table->integer('credits')->default(0);
-            $table->string('device_token')->nullable();
-            $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at');
+            $table->unique(['api_tournament_id', 'api_id_long']);
         });
     }
 
@@ -32,6 +31,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::drop('users');
+        Schema::dropIfExists('rosters');
     }
 }
