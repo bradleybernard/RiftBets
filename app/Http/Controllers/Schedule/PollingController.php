@@ -487,7 +487,7 @@ class PollingController extends ScrapeController
         });
 
         foreach($insert as $game) {
-            DB::table('bet_details')->where('api_game_id', $game['api_game_id'])->update([
+            DB::table('bets')->where('api_game_id', $game['api_game_id'])->update([
                 'game_id'   => $game['game_id'],
             ]);
         }
