@@ -12,9 +12,8 @@ class MatchDetailsController extends ScrapeController
 {
     public function scrape()
     {
-    	$tournamentId = self::NA_LCS_SPRING_2017_ID;
-
-        $matches = DB::table('matches')->select('api_id_long as match_id')->get();
+        $matches = DB::table('matches')->select(['matches.api_id_long as match_id', 'brackets.api_tournament_id'])
+                    ->join('brackets', 'brackets.api_id_long', '=', 'matches.api_bracket_id')->get();
 
         //attempt to gather and insert data of each match
         foreach ($matches as $match) {
@@ -23,7 +22,7 @@ class MatchDetailsController extends ScrapeController
             $gameVideos   = [];
 
         	try {
-                $response = $this->client->request('GET', 'v2/highlanderMatchDetails?tournamentId='. $tournamentId .'&matchId=' . $match->match_id);
+                $response = $this->client->request('GET', 'v2/highlanderMatchDetails?tournamentId='. $match->api_tournament_id .'&matchId=' . $match->match_id);
             } catch (ClientException $e) {
                 Log::error($e->getMessage()); return;
             } catch (ServerException $e) {

@@ -21,7 +21,7 @@ class AnswersController extends Controller
     // First test insert answers for a game
     public function testJob()
     {
-        dispatch(new InsertGameQuestionAnswers(Game::where('game_id', '1001890201')->first()));
+        dispatch(new InsertGameQuestionAnswers(Game::where('game_id', '1002040277')->first()));
     }
 
     // Select all questions and then assign data for the game into private properties
@@ -53,9 +53,9 @@ class AnswersController extends Controller
     {
         $items = [];
 
-        for ($i = 1; $i <= 6; $i++)
+        for ($i = 0; $i <= 6; $i++)
         {
-            array_push($items, $this->gamePlayerStats->where('participant_id', $playerId)->pluck('item_' .$i)->first());
+            array_push($items, $this->gamePlayerStats->where('participant_id', $playerId)->pluck('item_' . $i)->first());
         }
 
         $items = array_filter($items, function($item){return !is_null($item);});
@@ -105,9 +105,9 @@ class AnswersController extends Controller
     {
         $bans = [];
 
-        for ($i = 1; $i <= 3; $i++)
+        for ($i = 1; $i <= 5; $i++)
         {
-            array_push($bans, $this->gameTeamStats->where('team_id', $teamId)->pluck('ban_' .$i)->first());
+            array_push($bans, $this->gameTeamStats->where('team_id', $teamId)->pluck('ban_' . $i)->first());
         }
 
         asort($bans);
@@ -324,7 +324,7 @@ class AnswersController extends Controller
 
     private function teamOnePlayerSupportChampion()
     {
-        return $this->gamePlayerStats->where('participant_id', 5    )->pluck('champion_id')->first();
+        return $this->gamePlayerStats->where('participant_id', 5)->pluck('champion_id')->first();
     }
 
     private function teamTwoPlayerSupportChampion()

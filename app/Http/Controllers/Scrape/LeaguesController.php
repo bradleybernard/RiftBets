@@ -19,7 +19,7 @@ class LeaguesController extends ScrapeController
 
     public function scrape()
     {
-        $leagues = [self::NA_LCS_LEAGUE];
+        $leagues = [self::NA_LCS_LEAGUE, self::EU_LCS_LEAGUE, self::LCK_LEAGUE];
 
         foreach($leagues as $leagueId) {
             
@@ -76,7 +76,7 @@ class LeaguesController extends ScrapeController
 
             foreach($response->highlanderTournaments as $tournament) {
                 
-                if($tournament->title != self::NA_LCS_SPRING_2017) {
+                if(!in_array($tournament->title, [self::NA_LCS_SPRING_2017, self::EU_LCS_SPRING_2017, self::LCK_SPRING_2017])) {
                     continue;
                 }
 

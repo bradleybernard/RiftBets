@@ -10,9 +10,16 @@ use DB;
 class ScrapeController extends Controller
 {
     const WORLDS_2016_LEAGUE = 9;
+    const WORLDS_2016 = 'worlds_2016';
+
     const NA_LCS_LEAGUE = 2;
     const NA_LCS_SPRING_2017 = 'na_2017_spring';
-    const NA_LCS_SPRING_2017_ID = 'ce8e57ab-9804-496d-941a-9d04558f7bb4';
+
+    const EU_LCS_LEAGUE = 3;
+    const EU_LCS_SPRING_2017 = 'eu_2017_spring';
+
+    const LCK_LEAGUE = 6;
+    const LCK_SPRING_2017 = 'lck_2017_spring';
 
     protected $client   = null;
     protected $baseUri  = 'http://api.lolesports.com/api/';

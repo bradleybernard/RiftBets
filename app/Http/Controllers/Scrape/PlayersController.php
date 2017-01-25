@@ -18,7 +18,6 @@ class PlayersController extends ScrapeController
     {
         $teams = DB::table('rosters')->join('teams', 'rosters.api_team_id', '=', 'teams.api_id')
                     ->select(['api_id', 'api_tournament_id', 'slug'])
-                    ->where('api_tournament_id', self::NA_LCS_SPRING_2017_ID)
                     ->get();
 
         foreach($teams as $team)
