@@ -12,8 +12,7 @@ class MatchDetailsController extends ScrapeController
 {
     public function scrape()
     {
-    	$tournamentId = '3c5fa267-237e-4b16-8e86-20378a47bf1c';
-    	//$matchId = '0dae40a2-fdcb-4539-9c39-376c545438fb';
+    	$tournamentId = self::NA_LCS_SPRING_2017_ID;
 
         $matches = DB::table('matches')->select('api_id_long as match_id')->get();
 

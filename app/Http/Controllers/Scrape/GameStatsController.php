@@ -15,19 +15,18 @@ class GameStatsController extends ScrapeController
 	//gather data from uri about events and stats from during a game and insert into the database
 	public function scrape()
 	{
-		$gameRealm = 'TRLH1';
+		//$gameRealm = 'TRLH1';
 		//$gameId = '1001890201';
 		//$gameHash = '6751c4ef7ef58654';
 
-		$games = DB::table('game_mappings')->select(['game_mappings.game_id', 'game_mappings.game_hash', 'games.name as game_name'])
+		$games = DB::table('game_mappings')->select(['game_mappings.game_id', 'game_mappings.game_hash', 'games.name as game_name', 'games.game_realm'])
 					->join('games', 'games.game_id', '=', 'game_mappings.game_id') 
 					->get();
 
-		//get stats for each game in the database
-		foreach ($games as $game)
-		{
+		foreach ($games as $game) {
 			$gameId = $game->game_id;
 			$gameHash = $game->game_hash;
+			$gameRealm = $game->game_realm;
 
 			$gameStats = [];
 			$teamStats = [];
@@ -35,6 +34,7 @@ class GameStatsController extends ScrapeController
 
 			try {
 	    		$response = $this->client->request('GET', 'v1/stats/game/' . $gameRealm . '/' . $gameId . '?gameHash=' . $gameHash);
+	    		echo 'v1/stats/game/' . $gameRealm . '/' . $gameId . '?gameHash=' . $gameHash . "\n";
 		    } catch (ClientException $e) {
 			    Log::error($e->getMessage()); return;
 		    } catch (ServerException $e) {
@@ -99,12 +99,13 @@ class GameStatsController extends ScrapeController
 			    	'champion_id'			=> $player->championId,
 			    	'spell1_id'				=> $player->spell1Id,
 			    	'spell2_id'				=> $player->spell2Id,
-			    	'item_1'				=> $this->cleanItem($player->stats->item0),
-			    	'item_2'				=> $this->cleanItem($player->stats->item1),
-			    	'item_3'				=> $this->cleanItem($player->stats->item2),
-			    	'item_4'				=> $this->cleanItem($player->stats->item3),
-			    	'item_5'				=> $this->cleanItem($player->stats->item4),
-			    	'item_6'				=> $this->cleanItem($player->stats->item5),
+			    	'item_0'				=> $this->cleanItem($player->stats->item0),
+			    	'item_1'				=> $this->cleanItem($player->stats->item2),
+			    	'item_2'				=> $this->cleanItem($player->stats->item2),
+			    	'item_3'				=> $this->cleanItem($player->stats->item3),
+			    	'item_4'				=> $this->cleanItem($player->stats->item4),
+			    	'item_5'				=> $this->cleanItem($player->stats->item5),
+			    	'item_6'				=> $this->cleanItem($player->stats->item6),
 			    	'kills'					=> $player->stats->kills,
 			    	'deaths'				=> $player->stats->deaths,
 			    	'assists'				=> $player->stats->assists,
@@ -127,8 +128,7 @@ class GameStatsController extends ScrapeController
 	private function fixApiIds()
 	{
 		$columns = [
-			'matches.api_id_long', 'matches.api_resource_id_one', 'matches.api_resource_id_two',
-			'games.game_id'
+			'matches.api_id_long', 'matches.api_resource_id_one', 'matches.api_resource_id_two', 'games.game_id'
 		];
 
 		$matches = DB::table('matches')->select($columns)
@@ -159,7 +159,7 @@ class GameStatsController extends ScrapeController
 
 			if (strlen($name_one->team_name) < 3)
 			{
-				$name_one->team_name = $name_one->team_name .' ';
+				$name_one->team_name = $name_one->team_name . ' ';
 			}
 
 			if($game == $name_one->team_name)

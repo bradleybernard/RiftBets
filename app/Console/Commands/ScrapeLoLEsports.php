@@ -49,8 +49,8 @@ class ScrapeLoLEsports extends Command
         app()->make('App\Http\Controllers\Questions\QuestionsController')->insertQuestions();
         $this->info('Inserted questions data');
 
-        app()->make('App\Http\Controllers\Schedule\AnswersController')->testJob();
-        $this->info('Inserted answers from questions/gamestats table');
+        //app()->make('App\Http\Controllers\Schedule\AnswersController')->testJob();
+        //$this->info('Inserted answers from questions/gamestats table');
 
         $this->info('LoLEsports scrape completed successfully!');
     }

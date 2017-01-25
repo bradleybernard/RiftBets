@@ -17,11 +17,9 @@ class LeaguesController extends ScrapeController
         'matches', 'games', 'bracket_resources', 'bracket_records',
     ];
 
-    const WORLDS_2016_LEAGUE = 9;
-
     public function scrape()
     {
-        $leagues = [self::WORLDS_2016_LEAGUE];
+        $leagues = [self::NA_LCS_LEAGUE];
 
         foreach($leagues as $leagueId) {
             
@@ -78,7 +76,7 @@ class LeaguesController extends ScrapeController
 
             foreach($response->highlanderTournaments as $tournament) {
                 
-                if($tournament->title != 'world_championship_2016') {
+                if($tournament->title != self::NA_LCS_SPRING_2017) {
                     continue;
                 }
 

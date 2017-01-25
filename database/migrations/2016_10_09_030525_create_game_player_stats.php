@@ -22,6 +22,7 @@ class CreateGamePlayerStats extends Migration
             $table->integer('champion_id');
             $table->integer('spell1_id');
             $table->integer('spell2_id');
+            $table->integer('item_0')->nullable();
             $table->integer('item_1')->nullable();
             $table->integer('item_2')->nullable();
             $table->integer('item_3')->nullable();
