@@ -24,6 +24,7 @@ class GameStatsController extends ScrapeController
 					->get();
 
 		foreach ($games as $game) {
+			
 			$gameId = $game->game_id;
 			$gameHash = $game->game_hash;
 			$gameRealm = $game->game_realm;
