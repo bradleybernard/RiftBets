@@ -15,81 +15,84 @@ class TimelineController extends ScrapeController
     //get and insert information of events that occur during each minute of the game (eg triple kill, tower destroyed)
 	public function scrape()
 	{
-        $gameRealm = 'TRLH1';
-		$gameId = '1001890201';
-		$gameHash = '6751c4ef7ef58654';
+        $games = DB::table('game_mappings')->select(['game_mappings.game_id', 'game_mappings.game_hash', 'games.name as game_name', 'games.game_realm'])
+                    ->join('games', 'games.game_id', '=', 'game_mappings.game_id') 
+                    ->get();
 
-    	$playerStats = [];
-    	$gameEvents = [];
-    	$eventDetails = [];
+        foreach($games as $game) {
 
-	    try {
-	    	$response = $this->client->request('GET', 'v1/stats/game/' . $gameRealm . '/' . $gameId . '/timeline?gameHash=' . $gameHash);
-	    } catch (ClientException $e) {
-		    Log::error($e->getMessage()); return;
-	    } catch (ServerException $e) {
-	        Log::error($e->getMessage()); return;
-	    }
+            $playerStats = [];
+            $gameEvents = [];
+            $eventDetails = [];
 
-	    $response = json_decode((string)$response->getBody());
-        $gameEventCounter = 0;
+    	    try {
+    	    	$response = $this->client->request('GET', 'v1/stats/game/' . $game->game_realm . '/' . $game->game_id . '/timeline?gameHash=' . $game->game_hash);
+    	    } catch (ClientException $e) {
+    		    Log::error($e->getMessage()); return;
+    	    } catch (ServerException $e) {
+    	        Log::error($e->getMessage()); return;
+    	    }
 
-        //gather data of each player during each frame
-	    foreach ($response->frames as $frame) 
-	    {
-	    	foreach ($frame->participantFrames as $player) 
-	    	{
-	    		$playerStats[] = [
-	    			'game_id'			=> $gameId,
-            		'api_participant_id'	=> $player->participantId,
-            		'x_position'			=> $player->position->x,
-            		'y_position'			=> $player->position->y,
-            		'current_gold'			=> $player->currentGold,
-            		'total_gold'			=> $player->totalGold,
-            		'level'					=> $player->level,
-            		'xp'					=> $player->xp,
-            		'minions_killed'		=> $player->minionsKilled,
-            		'jungle_minions_killed'	=> $player->jungleMinionsKilled,
-            		'dominion_score'		=> $player->dominionScore,
-            		'team_score'			=> $player->teamScore,
-            		'game_time_stamp'		=> $frame->timestamp
-            	];
-	    	}
-	    	
-            $skip = ['type', 'timestamp'];
+    	    $response = json_decode((string)$response->getBody());
+            $gameEventCounter = 0;
 
-            //get events that occur in each minute
-	    	foreach ($frame->events as $event) 
-	    	{
-	    		$gameEvents[] = [
-                    'game_id'           => $gameId,
-            		'type'			        => strtolower($event->type),
-            		'timestamp'		        => $event->timestamp,
-                    'unique_id'             => ($gameId . '_' . ++$gameEventCounter),
-	    		];
+            //gather data of each player during each frame
+    	    foreach ($response->frames as $frame) 
+    	    {
+    	    	foreach ($frame->participantFrames as $player) 
+    	    	{
+    	    		$playerStats[] = [
+    	    			'game_id'			    => $game->game_id,
+                		'api_participant_id'	=> $player->participantId,
+                		'x_position'			=> $player->position->x,
+                		'y_position'			=> $player->position->y,
+                		'current_gold'			=> $player->currentGold,
+                		'total_gold'			=> $player->totalGold,
+                		'level'					=> $player->level,
+                		'xp'					=> $player->xp,
+                		'minions_killed'		=> $player->minionsKilled,
+                		'jungle_minions_killed'	=> $player->jungleMinionsKilled,
+                		'dominion_score'		=> $player->dominionScore,
+                		'team_score'			=> $player->teamScore,
+                		'game_time_stamp'		=> $frame->timestamp
+                	];
+    	    	}
+    	    	
+                $skip = ['type', 'timestamp'];
 
-	    		foreach ($event as $eventKey => $eventValue) 
-	    		{
-	    			if(in_array($eventKey, $skip)) {
-                        continue;
+                //get events that occur in each minute
+    	    	foreach ($frame->events as $event) 
+    	    	{
+    	    		$gameEvents[] = [
+                        'game_id'               => $game->game_id,
+                		'type'			        => strtolower($event->type),
+                		'timestamp'		        => $event->timestamp,
+                        'unique_id'             => ($game->game_id . '_' . ++$gameEventCounter),
+    	    		];
+
+    	    		foreach ($event as $eventKey => $eventValue) 
+    	    		{
+    	    			if(in_array($eventKey, $skip)) {
+                            continue;
+                        }
+
+                        // Gather collection of [game_event_details]. There is either
+                        // a single record in the collection or multiple records.
+                        // Either way we loop thru the collection and append each
+                        // record to the eventDetails array
+                        $records = $this->collectDetails($eventKey, $eventValue);
+                        foreach($records as $record) {
+                            $record['event_unique_id'] = ($game->game_id . '_' . $gameEventCounter);
+                            $eventDetails[] = $record;
+                        }
                     }
+    	    	}
+    	    }
 
-                    // Gather collection of [game_event_details]. There is either
-                    // a single record in the collection or multiple records.
-                    // Either way we loop thru the collection and append each
-                    // record to the eventDetails array
-                    $records = $this->collectDetails($eventKey, $eventValue);
-                    foreach($records as $record) {
-                        $record['event_unique_id'] = ($gameId . '_' . $gameEventCounter);
-                        $eventDetails[] = $record;
-                    }
-                }
-	    	}
-	    }
-
-    	DB::table('game_frame_player_stats')->insert($playerStats);
-		DB::table('game_events')->insert($gameEvents);
-		DB::table('game_event_details')->insert($eventDetails);
+            DB::table('game_frame_player_stats')->insert($playerStats);
+            DB::table('game_events')->insert($gameEvents);
+            DB::table('game_event_details')->insert($eventDetails);
+        }
 	}
 
     // Ex: $this->collectDetails('participantId', 6);
