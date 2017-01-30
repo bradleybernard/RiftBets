@@ -21,7 +21,7 @@ class AnswersController extends Controller
     // First test insert answers for a game
     public function testJob()
     {
-        dispatch(new InsertGameQuestionAnswers(Game::where('game_id', '1002040277')->first()));
+        dispatch(new InsertGameQuestionAnswers(Game::where('game_id', '1002040412')->first()));
     }
 
     // Select all questions and then assign data for the game into private properties

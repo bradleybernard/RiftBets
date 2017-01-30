@@ -53,7 +53,7 @@ class LeaderboardFlush extends Command
 
         $redis->DEL(substr($deleteStr, 0, -1));
 
-        DB::table('user_stats')->chunk(750, function($stats) use ($redis, &$count, $leaderboards)
+        DB::table('user_stats')->orderBy('id', 'asc')->chunk(750, function($stats) use ($redis, &$count, $leaderboards)
         {
             $redis->pipeline(function ($pipe) use ($stats, $leaderboards)
             {
