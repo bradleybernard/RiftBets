@@ -76,43 +76,6 @@ class ScrapeController extends Controller
         }
     }
 
-    protected function clean($input)
-    {
-        $input = trim($input);
-        
-        if($input == "" || $input == "--") {
-            return null;
-        }
-
-        return $input;
-    }
-
-    protected function pryArr($array, $key, $attr) 
-    {
-        if(isset($array[$key])) {
-            if(isset($array[$key]->$attr)) {
-                return $array[$key]->$attr;
-            }
-        }
-
-        return null;
-    }
-
-    protected function pry($object, $path)
-    {
-        $parts = explode('->', $path);
-
-        foreach($parts as $part) {
-            if(property_exists($object, $part)) {
-                $object = $object->{$part};
-            } else {
-                return null;
-            }
-        }
-
-        return (is_string($object) ? $this->clean($object) : $object);
-    }
-
     protected function pluckResource($object)
     {
         $keys = ['roster', 'breakpoint', 'match', 'bracket'];

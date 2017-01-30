@@ -24,7 +24,7 @@ class UpdateLeaderboards implements ShouldQueue
         $redis = Redis::connection();
         $count = 0;
 
-        DB::table('user_stats')->where('redis_update', 1)->chunk(750, function ($stats) use ($redis, &$count)
+        DB::table('user_stats')->where('redis_update', 1)->orderBy('id', 'asc')->chunk(750, function ($stats) use ($redis, &$count)
         {
             $redis->pipeline(function ($pipe) use ($stats)
             {

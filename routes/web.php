@@ -11,14 +11,18 @@
 |
 */
 
+Route::get('/', function() {
+    return  'Home page';
+});
+
 Route::get('/auth/facebook', 'Auth\AuthController@redirectToProvider');
 Route::get('/auth/facebook/callback', 'Auth\AuthController@handleProviderCallback');
 Route::get('stats', 'Scrape\StatsController@scrape');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-Auth::routes();
+// Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+// Route::get('/home', 'HomeController@index');
