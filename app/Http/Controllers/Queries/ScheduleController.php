@@ -23,7 +23,7 @@ class ScheduleController extends Controller
             ->orderBy('scheduled_time', 'asc')
             ->leftJoin('matches', 'matches.api_id_long', '=', 'schedule.api_match_id')
             ->join('brackets', 'brackets.api_id_long', '=', 'matches.api_bracket_id')
-            ->where('schedule.api_tournament_id', '3c5fa267-237e-4b16-8e86-20378a47bf1c')
+            // ->where('schedule.api_tournament_id', '3c5fa267-237e-4b16-8e86-20378a47bf1c')
             ->get();
 
         $bestof = $rows->filter(function ($value, $key) {
