@@ -67,7 +67,7 @@ class GradingController extends Controller
 		]);
 
 		dispatch(new UpdateLeaderboards());
-		dispatch(new PushNotificationsForGradedBets());
+		//dispatch(new PushNotificationsForGradedBets());
 	}
 
 	// Reset weekly user stats
