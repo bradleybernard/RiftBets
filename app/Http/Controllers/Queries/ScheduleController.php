@@ -10,8 +10,10 @@ use DB;
 
 class ScheduleController extends Controller
 {
-    public function query()
+    public function query(Request $req)
     {
+        $league = $req->input('league');
+
         $columns = [
             'block_prefix', 'block_label', 'sub_block_prefix', 'sub_block_label', 'scheduled_time', 'matches.name',
             'matches.state', 'api_resource_id_one', 'api_resource_id_two', 'resource_type', 'score_one', 'score_two',
@@ -23,8 +25,10 @@ class ScheduleController extends Controller
             ->orderBy('scheduled_time', 'asc')
             ->leftJoin('matches', 'matches.api_id_long', '=', 'schedule.api_match_id')
             ->join('brackets', 'brackets.api_id_long', '=', 'matches.api_bracket_id')
-            // ->where('schedule.api_tournament_id', '3c5fa267-237e-4b16-8e86-20378a47bf1c')
-            ->get();
+            ->join('leagues', 'leagues.api_id', '=', 'schedule.api_league_id')
+            ->when($req->input('league'), function($query) use ($req){
+                return $query->where('leagues.slug', $req->input('league'));
+            })->get();
 
         $bestof = $rows->filter(function ($value, $key) {
             return $value->score_one === null && $value->match_best_of == 5; 
