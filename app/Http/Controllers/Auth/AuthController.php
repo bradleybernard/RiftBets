@@ -12,6 +12,7 @@ use App\Leaderboard;
 use JWTAuth;
 use Redis;
 use Socialite;
+use Cookie;
 
 class AuthController extends Controller
 {
@@ -49,6 +50,7 @@ class AuthController extends Controller
         }
 
         $token = JWTAuth::fromUser($user);
+        Cookie::queue('jwt', $token, 60 * 24 * 365);
 
         return $this->response->array([
             'token' => $token,
