@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>RiftBets</title>
 
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
@@ -18,6 +18,16 @@
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
         ]) !!};
+    </script>
+    <script>
+    let store = {
+        user: {
+            id: {{ Auth::user()->id }},
+            name: {{ Auth::user()->name }},
+            email: {{ Auth::user()->email }},
+            credits: {{ Auth::user()->credits }},
+        }
+    };
     </script>
 </head>
 <body>
@@ -36,7 +46,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        RiftBets
                     </a>
                 </div>
 

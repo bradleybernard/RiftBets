@@ -13,10 +13,11 @@ class CreateSubscribedUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscribed_users', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
             $table->string('api_match_id');
+            $table->boolean('is_active')->default(true);
             $table->timestamp('created_at');
         });
     }
@@ -28,6 +29,6 @@ class CreateSubscribedUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscribed_users');
+        Schema::dropIfExists('subscriptions');
     }
 }
