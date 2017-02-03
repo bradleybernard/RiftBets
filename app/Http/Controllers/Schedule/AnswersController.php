@@ -270,6 +270,26 @@ class AnswersController extends Controller
         return $this->gameTeamStats->where('team_id', 200)->pluck('ban_3')->first();
     }
 
+    private function teamOneBanFourthChampion()
+    {
+        return $this->gameTeamStats->where('team_id', 100)->pluck('ban_3')->first();
+    }
+
+    private function teamTwoBanFourthChampion()
+    {
+        return $this->gameTeamStats->where('team_id', 200)->pluck('ban_3')->first();
+    }
+
+    private function teamOneBanFifthChampion()
+    {
+        return $this->gameTeamStats->where('team_id', 100)->pluck('ban_3')->first();
+    }
+
+    private function teamTwoBanFifthChampion()
+    {
+        return $this->gameTeamStats->where('team_id', 200)->pluck('ban_3')->first();
+    }
+
     private function teamOneChampionBans()
     {
         return $this->teamBans(100);

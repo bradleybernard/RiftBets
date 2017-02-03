@@ -206,13 +206,6 @@ class QuestionsController extends Controller
                 'difficulty'    => 'hard'
             ],
             [
-                'slug'          => 'team_one_ban_third_champion', 
-                'description'   => 'Which champion will %team_one% ban last?',
-                'type'          => 'champion_id',
-                'multiplier'    => 2.0,
-                'difficulty'    => 'hard'
-            ],
-            [
                 'slug'          => 'team_two_ban_third_champion', 
                 'description'   => 'Which champion will %team_two% ban last?',
                 'type'          => 'champion_id',
@@ -220,16 +213,51 @@ class QuestionsController extends Controller
                 'difficulty'    => 'hard'
             ],
             [
+                'slug'          => 'team_one_ban_third_champion', 
+                'description'   => 'Which champion will %team_one% ban last?',
+                'type'          => 'champion_id',
+                'multiplier'    => 2.0,
+                'difficulty'    => 'hard'
+            ],
+            [
+                'slug'          => 'team_two_ban_fourth_champion', 
+                'description'   => 'Which champion will %team_two% ban last?',
+                'type'          => 'champion_id',
+                'multiplier'    => 2.0,
+                'difficulty'    => 'hard'
+            ],
+            [
+                'slug'          => 'team_one_ban_fourth_champion', 
+                'description'   => 'Which champion will %team_one% ban last?',
+                'type'          => 'champion_id',
+                'multiplier'    => 2.0,
+                'difficulty'    => 'hard'
+            ],
+            [
+                'slug'          => 'team_two_ban_fifth_champion', 
+                'description'   => 'Which champion will %team_two% ban last?',
+                'type'          => 'champion_id',
+                'multiplier'    => 2.0,
+                'difficulty'    => 'hard'
+            ],
+            [
+                'slug'          => 'team_one_ban_fifth_champion', 
+                'description'   => 'Which champion will %team_one% ban last?',
+                'type'          => 'champion_id',
+                'multiplier'    => 2.0,
+                'difficulty'    => 'hard'
+            ],
+            [
                 'slug'          => 'team_one_champion_bans', 
                 'description'   => 'Which champions will %team_one% ban?',
-                'type'          => 'champion_id_list_3',
+                'type'          => 'champion_id_list_5',
                 'multiplier'    => 10.0,
                 'difficulty'    => 'hard'
             ],
             [
                 'slug'          => 'team_two_champion_bans', 
                 'description'   => 'Which champions will %team_two% ban?',
-                'type'          => 'champion_id_list_3',
+                'type'          => 'champion_id_list_5',
                 'multiplier'    => 10.0,
                 'difficulty'    => 'hard'
             ]
