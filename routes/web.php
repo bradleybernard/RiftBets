@@ -18,6 +18,7 @@ Route::get('/', function() {
 Route::get('/auth/facebook', 'Auth\AuthController@redirectToProvider');
 Route::get('/auth/facebook/callback', 'Auth\AuthController@handleProviderCallback');
 Route::get('stats', 'Scrape\StatsController@scrape');
+Route::get('/test', 'TestController@test');
 
 // Route::get('/', function () {
 //     return view('welcome');

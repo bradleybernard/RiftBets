@@ -40,16 +40,16 @@ class PushNotificationForMatches implements ShouldQueue
 						->where('api_match_id', $games->first->api_match_id)
 						->get();
 
-		$event = DB::table('matches')->select(['matches.name as teams_playing', 'state', 'games.name', 'match_best_of', 'api_match_id'])
-						->join('games', 'games.api_id_long', '=', $games->first->api_game_id)
-						->join('brackets', 'brackets.api_id_long', '=', 'matches.api_bracket_id')
-						->where('matches.api_id_long', $games->first->api_match_id)
-						->get();
+        $event = DB::table('matches')->select(['matches.name as teams_playing', 'matches.state as game_state', 'games.name', 'match_best_of', 'api_match_id'])->join('games', 'games.api_match_id', '=', 'matches.api_id_long')
+               ->join('brackets', 'brackets.api_id_long', '=', 'matches.api_bracket_id')
+               ->where('matches.api_id_long', $game->api_match_id)
+               ->where('games.api_id_long', $game->api_game_id)
+               ->get();
 
-		if($event->state != "resolved")
-			$flag = true;
-		else
-			$flag = false;
+        if($event->state == "resolved")
+            $flag = true;
+        else
+            $flag = false;
 
 		$message = new Message($this->formatMessage($event, $flag));
 
@@ -77,26 +77,28 @@ class PushNotificationForMatches implements ShouldQueue
 		}
 	}
 
-	private function formatMessage($event, $flag)
-	{
-		$games = DB::table('games')
+    private function formatMessage($event, $flag)
+    {
+        $games = DB::table('games')
                             ->where('games.api_match_id', $event->api_match_id)
                             ->orderBy('name', 'asc')
                             ->join('game_team_stats', 'game_team_stats.game_id', '=', 'games.game_id')
                             ->get();
 
-		$score1 = $games->where('team_id', 100)->sum('win');
-		$score2 = $games->where('team_id', 200)->sum('win');
+        $score1 = $games->where('team_id', 100)->sum('win');
+        $score2 = $games->where('team_id', 200)->sum('win');
 
-		if($flag == true)
-		{
-			$message = 'Game ' . $event->name[1] . ' of ' . $event->match_best_of . 'for' . $event->teams_playing .'has completed' 
-			. 'with a current match score of' . $event->score_one .  '-' . $event->score_two;
-		}
+        if($flag != true)
+        {
+            $message = $event->teams_playing . 'has ended with a final score of ' . $score1 . ' - ' . $score2;
+        }
+        else
+        {
+            $message = 'Game ' . $event->name[1] . ' of ' . $event->match_best_of . 'for' . $event->teams_playing .'has completed' 
+            . 'with a current match score of' . $event->score_one .  '-' . $event->score_two;
+        }
 
-		// else
-		// {
+        return $message;
+    }
 
-		// }
-	}
 }
