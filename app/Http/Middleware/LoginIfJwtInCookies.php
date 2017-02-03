@@ -19,7 +19,7 @@ class LoginIfJwtInCookies
      */
     public function handle($request, Closure $next)
     {
-        if ($cookie = $request->cookie('jwt')) {
+        if(!Auth::check() && $cookie = $request->cookie('jwt')) {
             $token = new Token($cookie);
             $jwt = JWTAuth::decode($token);
             $user = User::find($jwt->get('sub'));

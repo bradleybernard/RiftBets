@@ -50,7 +50,7 @@ class AuthController extends Controller
         }
 
         $token = JWTAuth::fromUser($user);
-        Cookie::queue('jwt', $token, 60 * 24 * 300);
+        Cookie::queue('jwt', $token, 60 * 24 * 365);
 
         return $this->response->array([
             'token' => $token,

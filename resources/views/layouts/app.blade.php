@@ -20,14 +20,14 @@
         ]) !!};
     </script>
     <script>
-    let store = {
-        user: {
-            id: {{ Auth::user()->id }},
-            name: {{ Auth::user()->name }},
-            email: {{ Auth::user()->email }},
-            credits: {{ Auth::user()->credits }},
-        }
-    };
+        let store = {
+            user: {
+                id: {{ Auth::user()->id }},
+                name: {{ Auth::user()->name }},
+                email: {{ Auth::user()->email }},
+                credits: {{ Auth::user()->credits }},
+            }
+        };
     </script>
 </head>
 <body>
