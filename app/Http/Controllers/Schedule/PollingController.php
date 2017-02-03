@@ -553,7 +553,9 @@ class PollingController extends ScrapeController
     {
         foreach($games as $game)
         {
-            dispatch(new PushNotificationsForMatches($game));
+            Log::info('Game passed to Broadcast is: ' . $game);
+            // dispatch(new PushNotificationsForMatches($game));
+            event(new \App\Events\BroadcastForMatches($game));
         }
     }
 }

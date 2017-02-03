@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('avatar_url')->nullable();
             $table->integer('credits')->default(0);
             $table->string('device_token')->nullable();
+            $table->boolean('sent_welcome_email')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
