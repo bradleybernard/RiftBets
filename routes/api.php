@@ -35,6 +35,7 @@ $api->version('v1', function ($api)
 
     $api->group(['middleware' => 'api.auth'], function ($api) {
         $api->post('bets/create', 'App\Http\Controllers\Bets\BetsController@bet');
+        $api->get('bets/response', 'App\Http\Controllers\Queries\UserProfileController@query');
         $api->post('user/bets', 'App\Http\Controllers\Queries\UserBetsController@query');
         $api->post('cards/create', 'App\Http\Controllers\Queries\CardController@generate');
         $api->get('subscribe/check', 'App\Http\Controllers\Subscriptions\SubscriptionsController@checkSubscription');

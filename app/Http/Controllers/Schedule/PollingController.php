@@ -104,7 +104,7 @@ class PollingController extends ScrapeController
 
                 $this->updateGameAndMatchRows($league, $games);
 
-                // $this->pushToSubscribers($games);
+                $this->pushToSubscribers($games);
 
                 //check resolved to see if match is completed
                 //new function in polling controller sendPushNotificationsToSubscribers
@@ -551,9 +551,9 @@ class PollingController extends ScrapeController
     // Dispatch job to send push notifications to users subscribed to a game
     public function pushToSubscribers($games)
     {
+        Log::info('pushToSubscribers called');
         foreach($games as $game)
         {
-            Log::info('Game passed to Broadcast is: ' . $game);
             // dispatch(new PushNotificationsForMatches($game));
             event(new \App\Events\BroadcastForMatches($game));
         }

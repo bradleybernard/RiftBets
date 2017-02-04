@@ -189,4 +189,20 @@ class BetsController extends Controller
 		]);
 	}
 
+	public function response(Request $request)
+	{
+		$user = $this->auth->user();
+		$game_id = $request['game_id'];
+
+		$bets = DB::table('bets')
+				->where('bets.is_complete', false)
+				->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
+				->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
+				->join('questions', 'questions.id', '=', 'question_answers.question_id')
+				->where('bets.user_id', $user->id)
+				->where('bets.game_id', $game_id)
+				->get();
+
+		return $bets;
+	}
 }

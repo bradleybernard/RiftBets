@@ -25,10 +25,11 @@ class BroadcastForMatches implements ShouldBroadcast
      */
     public function __construct($game)
     {
+        Log::info($game);
         $event = DB::table('matches')->select(['matches.name as teams_playing', 'matches.state as game_state', 'games.name', 'match_best_of', 'api_match_id'])->join('games', 'games.api_match_id', '=', 'matches.api_id_long')
                ->join('brackets', 'brackets.api_id_long', '=', 'matches.api_bracket_id')
-               ->where('matches.api_id_long', $game->api_match_id)
-               ->where('games.api_id_long', $game->api_game_id)
+               ->where('matches.api_id_long', $game['api_match_id'])
+               ->where('games.api_id_long', $game['api_game_id'])
                ->get();
 
         if($event[0]->game_state == "resolved")
@@ -38,12 +39,15 @@ class BroadcastForMatches implements ShouldBroadcast
 
         // $this->game = (object)[];
         $this->game = json_encode([
-            'gameId'    => $event[0]->name[1],
+            'gameNumber'    => $event[0]->name[1],
             'matchId'   => $event[0]->api_match_id,
             'resolved'  => $flag
         ]);
 
         Log::info('Game data dispatched');
+        // Log::info('Game Number: ' . $event[0]->name[1]);
+        // Log::info('Match ID: '. $event[0]->api_match_id);
+        // Log::info('Game Resolved: ' . $flag);
 
         // $this->game = (object)[];
         // $this->game->gameId = $event[0]->name[1];
