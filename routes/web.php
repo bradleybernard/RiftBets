@@ -22,4 +22,3 @@ Route::get('/questions', 'Questions\QuestionsController@insertQuestions');
 
 //Delete soon plz
 Route::get('stats', 'Scrape\StatsController@scrape');
-Route::get('/test', 'TestController@test');
