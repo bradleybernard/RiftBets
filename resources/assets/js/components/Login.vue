@@ -17,7 +17,10 @@
 <script>
     export default {
         mounted() {
-            console.log('Component mounted.')
+            Echo.channel('matches.1')
+            .listen('game_done', (e) => {
+                
+            });
         }
         data() {
             return [];
