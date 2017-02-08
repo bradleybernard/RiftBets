@@ -194,13 +194,62 @@ class BetsController extends Controller
 		$user = $this->auth->user();
 		$game_id = $request['game_id'];
 
+
+
+		$ddragonChampion = DB::table('bets')
+							->where('bets.is_complete', true)
+							->where('bets.user_id', $user->id)
+							->where('bets.game_id', $game_id)
+							->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
+							->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
+							->join('questions', 'questions.id', '=', 'question_answers.question_id')
+							->groupBy('questions.type')
+							->having('questions.type', '=', 'champion_id')
+							->get();
+
+
+		$ddragonItem = DB::table('bets')
+							->where('bets.is_complete', true)
+							->where('bets.user_id', $user->id)
+							->where('bets.game_id', $game_id)
+							->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
+							->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
+							->join('questions', 'questions.id', '=', 'question_answers.question_id')
+							->groupBy('questions.type')
+							->having('questions.type', '=', 'item_id_list')
+							->get();
+
+		$ddragonSummoners = DB::table('bets')
+							->where('bets.is_complete', true)
+							->where('bets.user_id', $user->id)
+							->where('bets.game_id', $game_id)
+							->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
+							->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
+							->join('questions', 'questions.id', '=', 'question_answers.question_id')
+							->groupBy('questions.type')
+							->having('questions.type', '=', 'summoner_id_list')
+							->get();
+
+		// Gather final answer data
 		$bets = DB::table('bets')
-				->where('bets.is_complete', false)
+				->where('bets.is_complete', true)
 				->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
 				->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
 				->join('questions', 'questions.id', '=', 'question_answers.question_id')
 				->where('bets.user_id', $user->id)
 				->where('bets.game_id', $game_id)
+				->when($ddragonChampion, function($query) use $ddragonChampion{
+					return $query->where('ddragon_champions.api_id', 'question_answers.answer')
+								->where('questions.type', 'champion_id');
+				})
+				->when($ddragonItem, function($query) use $ddragonItem{
+					return $query->where('ddragon_items.api_id', 'question_answers.answer')
+								->where('questions.type', 'item_id_list');
+				})
+				->when($ddragonSummoners, function($query) use $ddragonSummoners{
+					return $query->where('ddragon_summoners.api_id', 'question_answers.answer')
+								->where('questions.type', 'summoner_id_list');
+				})
 				->get();
 
 		return $bets;
