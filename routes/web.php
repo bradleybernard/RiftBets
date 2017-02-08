@@ -16,9 +16,9 @@ Route::get('/auth/facebook/callback', 'Auth\AuthController@handleProviderCallbac
 Route::get('stats', 'Scrape\StatsController@scrape');
 Route::get('/questions', 'Questions\QuestionsController@insertQuestions');
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('home');
+});
 
 //Delete soon plz
 Route::get('stats', 'Scrape\StatsController@scrape');

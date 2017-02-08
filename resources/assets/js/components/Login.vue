@@ -15,15 +15,13 @@
 </template>
 
 <script>
+
     export default {
         mounted() {
-            Echo.channel('matches.1')
-            .listen('game_done', (e) => {
-                
-            });
-        }
-        data() {
-            return [];
+            Echo.channel('match.14cecce8-f45b-42cb-8478-45c357a2d099')
+                .listen('GameCompleted', (e) => {
+                    console.log(e);
+                });
         }
     }
 </script>

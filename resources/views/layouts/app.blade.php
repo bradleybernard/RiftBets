@@ -23,8 +23,8 @@
         let store = {
             user: {
                 id: {{ Auth::user()->id }},
-                name: {{ Auth::user()->name }},
-                email: {{ Auth::user()->email }},
+                name: '{{ Auth::user()->name }}',
+                email: '{{ Auth::user()->email }}',
                 credits: {{ Auth::user()->credits }},
             }
         };
@@ -87,11 +87,9 @@
                 </div>
             </div>
         </nav>
-
         @yield('content')
     </div>
-
-    <!-- Scripts -->
     <script src="/js/app.js"></script>
+    <!-- Scripts -->
 </body>
 </html>
