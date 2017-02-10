@@ -16,6 +16,7 @@ class StatsController extends ScrapeController
 	public function scrape() {
 
 		DB::table('math_stats')->truncate();
+		$collection = collect();
 
 		for ($i = 1; ; ++$i) {
 
@@ -32,9 +33,9 @@ class StatsController extends ScrapeController
 			if (count($response->data) == 0)
 				break;
 
-			$champs = [];
             foreach($response->data as $item) {
-                $champs[] = [
+                $collection->push([
+                	'api_id'			=> DB::table('ddragon_champions')->where('champion_id', $item->key)->select('api_id')->first()->api_id,
                     'champion_name'     => $item->key,
                     'role'				=> $item->role,
                     'ban_rate' 			=> $item->general->banRate,
@@ -42,12 +43,33 @@ class StatsController extends ScrapeController
                     'win_rate'       	=> $item->general->winPercent,
                     'overall_rank' 		=> $item->general->overallPosition,
                     'created_at'        => \Carbon\Carbon::now(),
-                ];
-            }
-
-            DB::table('math_stats')->insert($champs);
+                ]);
+            }          
 
         }
+
+        $collection = $collection->groupBy('api_id');
+        $champions = collect([]);
+
+        foreach($collection as $champ) {
+        	$champions->push([
+                'api_id' => $champ->max('api_id'),
+                'champion_name' => $champ->max('champion_name'),
+                'role' => $champ->max('role'),
+                'ban_rate' => $champ->max('ban_rate'),
+                'play_rate' => $champ->max('play_rate'),
+                'win_rate' => $champ->max('win_rate'),
+                'overall_rank' => $champ->max('overall_rank'),
+                'created_at' => $champ->max('created_at'), 
+                // This is the actual math
+                // The formula is completly made up, but seems quite reasonable
+                'ban_scale' => (20/$champ->max('ban_rate') < 10) ? 20/$champ->max('ban_rate') : 10,   
+                'pick_scale' => (20/$champ->max('play_rate') * (100-$champ->max('win_rate')) / 30 < 10) ? (20/$champ->max('play_rate') * (100-$champ->max('win_rate')) / 30) : 10,   		
+        	]);
+        }
+        
+        DB::table('math_stats')->insert($champions->toArray());
+
 	}
 }
 

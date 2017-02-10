@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call('App\Http\Controllers\Schedule\PollingController@poll')->everyMinute();
+        $schedule->call('App\Http\Controllers\Scrape\StatsController@scrape')->weekly();
         $schedule->call('App\Http\Controllers\Schedule\GradingController@resetWeekly')->weekly();
         $schedule->call('App\Http\Controllers\Schedule\GradingController@resetMonthly')->monthly();
     }
