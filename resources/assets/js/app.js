@@ -15,10 +15,11 @@ require('./bootstrap');
 
 Vue.component('example', require('./components/Example.vue'));
 Vue.component('login', require('./components/Login.vue'));
+Vue.component('navbar', require('./components/Navbar.vue'));
 
 const app = new Vue({
     el: '#app',
-    data: {
-        shared: store,
-    }
+    // data: {
+    //     shared: store,
+    // }
 });
