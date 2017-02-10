@@ -53,17 +53,22 @@ class StatsController extends ScrapeController
 
         foreach($collection as $champ) {
         	$champions->push([
-        		'ban_rate' => $champ->max('ban_rate'),
-        		
+                'api_id' => $champ->max('api_id'),
+                'champion_name' => $champ->max('champion_name'),
+                'role' => $champ->max('role'),
+                'ban_rate' => $champ->max('ban_rate'),
+                'play_rate' => $champ->max('play_rate'),
+                'win_rate' => $champ->max('win_rate'),
+                'overall_rank' => $champ->max('overall_rank'),
+                'created_at' => $champ->max('created_at'), 
+                // This is the actual math
+                // The formula is completly made up, but seems quite reasonable
+                'ban_scale' => (20/$champ->max('ban_rate') < 10) ? 20/$champ->max('ban_rate') : 10,   
+                'pick_scale' => (20/$champ->max('play_rate') * (100-$champ->max('win_rate')) / 30 < 10) ? (20/$champ->max('play_rate') * (100-$champ->max('win_rate')) / 30) : 10,   		
         	]);
-        	dd($champ->max('ban_rate'));
         }
-
-        $collection = $collection->max('api_id');
-        dd($collection);
-
-
-        DB::table('math_stats')->insert($colection->toArray());
+        
+        DB::table('math_stats')->insert($champions->toArray());
 
 	}
 }

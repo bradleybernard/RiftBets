@@ -15,6 +15,7 @@ class CreateMathStats extends Migration
     {
         Schema::create('math_stats', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('api_id');
             $table->string('champion_name');
             $table->string('role');
             $table->decimal('ban_rate', 4, 2);
@@ -22,6 +23,8 @@ class CreateMathStats extends Migration
             $table->decimal('win_rate', 4, 2);
             $table->integer('overall_rank');
             $table->timestamp('created_at');
+            $table->decimal('ban_scale', 4, 2);
+            $table->decimal('pick_scale', 4, 2);      
         });
     }
 
