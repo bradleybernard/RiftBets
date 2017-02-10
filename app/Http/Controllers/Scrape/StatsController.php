@@ -16,6 +16,7 @@ class StatsController extends ScrapeController
 	public function scrape() {
 
 		DB::table('math_stats')->truncate();
+		$collection = collect();
 
 		for ($i = 1; ; ++$i) {
 
@@ -32,9 +33,9 @@ class StatsController extends ScrapeController
 			if (count($response->data) == 0)
 				break;
 
-			$champs = [];
             foreach($response->data as $item) {
-                $champs[] = [
+                $collection->push([
+                	'api_id'			=> DB::table('ddragon_champions')->where('champion_id', $item->key)->select('api_id')->first()->api_id,
                     'champion_name'     => $item->key,
                     'role'				=> $item->role,
                     'ban_rate' 			=> $item->general->banRate,
@@ -42,12 +43,28 @@ class StatsController extends ScrapeController
                     'win_rate'       	=> $item->general->winPercent,
                     'overall_rank' 		=> $item->general->overallPosition,
                     'created_at'        => \Carbon\Carbon::now(),
-                ];
-            }
-
-            DB::table('math_stats')->insert($champs);
+                ]);
+            }          
 
         }
+
+        $collection = $collection->groupBy('api_id');
+        $champions = collect([]);
+
+        foreach($collection as $champ) {
+        	$champions->push([
+        		'ban_rate' => $champ->max('ban_rate'),
+        		
+        	]);
+        	dd($champ->max('ban_rate'));
+        }
+
+        $collection = $collection->max('api_id');
+        dd($collection);
+
+
+        DB::table('math_stats')->insert($colection->toArray());
+
 	}
 }
 
