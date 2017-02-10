@@ -11,6 +11,7 @@ use \GuzzleHttp\Exception\ServerException;
 use App\Game;
 use App\Jobs\InsertGameQuestionAnswers;
 use App\Jobs\PushNotificationsForMatches;
+use App\Events\GameCompleted;
 
 use DB;
 use \Carbon\Carbon;
@@ -555,7 +556,7 @@ class PollingController extends ScrapeController
         foreach($games as $game)
         {
             // dispatch(new PushNotificationsForMatches($game));
-            event(new \App\Events\BroadcastForMatches($game));
+            event(new GameCompleted($game));
         }
     }
 }

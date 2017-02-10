@@ -13,11 +13,12 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class BroadcastForMatches implements ShouldBroadcast
+class GameCompleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $game;
+    protected $game;
+
     /**
      * Create a new event instance.
      *
@@ -50,11 +51,6 @@ class BroadcastForMatches implements ShouldBroadcast
     public function broadcastOn()
     {
         return ['match.' . $this->game['matchId']];
-    }
-
-    public function broadcastAs()
-    {
-        return 'game.completed';
     }
 
     public function broadcastWith()
