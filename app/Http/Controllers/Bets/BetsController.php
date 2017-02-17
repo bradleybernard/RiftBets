@@ -189,68 +189,145 @@ class BetsController extends Controller
 		]);
 	}
 
-	public function response(Request $request)
+	public function respond(Request $request)
 	{
 		$user = $this->auth->user();
 		$game_id = $request['game_id'];
 
-
-
-		$ddragonChampion = DB::table('bets')
-							->where('bets.is_complete', true)
-							->where('bets.user_id', $user->id)
-							->where('bets.game_id', $game_id)
-							->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
-							->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
-							->join('questions', 'questions.id', '=', 'question_answers.question_id')
-							->groupBy('questions.type')
-							->having('questions.type', '=', 'champion_id')
-							->get();
-
-
-		$ddragonItem = DB::table('bets')
-							->where('bets.is_complete', true)
-							->where('bets.user_id', $user->id)
-							->where('bets.game_id', $game_id)
-							->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
-							->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
-							->join('questions', 'questions.id', '=', 'question_answers.question_id')
-							->groupBy('questions.type')
-							->having('questions.type', '=', 'item_id_list')
-							->get();
-
-		$ddragonSummoners = DB::table('bets')
-							->where('bets.is_complete', true)
-							->where('bets.user_id', $user->id)
-							->where('bets.game_id', $game_id)
-							->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
-							->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
-							->join('questions', 'questions.id', '=', 'question_answers.question_id')
-							->groupBy('questions.type')
-							->having('questions.type', '=', 'summoner_id_list')
-							->get();
-
-		// Gather final answer data
 		$bets = DB::table('bets')
-				->where('bets.is_complete', true)
-				->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
-				->join('question_answers', 'question_answers.game_id', '=', 'bets.game_id')
-				->join('questions', 'questions.id', '=', 'question_answers.question_id')
-				->where('bets.user_id', $user->id)
-				->where('bets.game_id', $game_id)
-				->when($ddragonChampion, function($query) use $ddragonChampion{
-					return $query->where('ddragon_champions.api_id', 'question_answers.answer')
-								->where('questions.type', 'champion_id');
-				})
-				->when($ddragonItem, function($query) use $ddragonItem{
-					return $query->where('ddragon_items.api_id', 'question_answers.answer')
-								->where('questions.type', 'item_id_list');
-				})
-				->when($ddragonSummoners, function($query) use $ddragonSummoners{
-					return $query->where('ddragon_summoners.api_id', 'question_answers.answer')
-								->where('questions.type', 'summoner_id_list');
-				})
-				->get();
+					->where('bets.is_complete', true)
+					->where('bets.user_id', $user->id)
+					->where('bets.game_id', $game_id)
+					->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
+					->join('questions', 'questions.id', '=', 'bet_details.question_id')
+					->join('question_answers', 'question_answers.id', '=', 'bet_details.answer_id')
+					->get();
+		// dd($bets);
+		$summoners = [];
+		$items = [];
+		$champions = [];
+		
+		$ddragon = [];
+
+		// Gather answers and user_answers for game
+		foreach ($bets as $bet) {
+			if($bet->type == 'champion_id') {
+				$ddragon['champion_id'] = true;
+				$champions[] = $bet->answer;
+				$champions[] = $bet->user_answer;
+			} if($bet->type == 'champion_id_list_3') {
+				$ddragon['champion_id_list_3'] = true;
+				$championList = explode(',', $bet->answer);
+				foreach ($championList as $champ) {
+					$champions[] = $champ;
+				}
+				$userList = explode(',', $bet->user_answer);
+				foreach ($userList as $champ) {
+					$champions[] = $champ;
+				}
+
+			} if($bet->type == 'champion_id_list_5') {
+				$ddragon['champion_id_list_5'] = true;
+				$championList = explode(',', $bet->answer);
+				// dd($championList);
+				foreach ($championList as $champ) {
+					$champions[] = $champ;
+				}
+				$userList = explode(',', $bet->user_answer);
+				foreach ($userList as $champ) {
+					$champions[] = $champ;
+				}
+
+			} if($bet->type == 'item_id_list') {
+				$ddragon['item_id_list'] = true;
+				$itemList = explode(',', $bet->answer);
+				foreach ($itemList as $item) {
+					$items[] = $item;
+				}
+				$userList = explode(',', $bet->user_answer);
+				foreach ($userList as $item) {
+					$items[] = $item;
+				}
+
+			} if($bet->type == 'summoner_id_list') {
+				$ddragon['summoner_id_list'] = true;
+				$summonerList = explode(',', $bet->answer);
+				foreach ($summonerList as $summoner) {
+					$summoners[] = $summoner;
+				}
+				$userList = explode(',', $bet->user_answer);
+				foreach ($summonerList as $summoner) {
+					$summoners[] = $summoner;
+				}
+			}
+		}
+
+		// Make champs, summoners, and items unique
+		$summoners = collect($summoners)->unique();
+		$items = collect($items)->unique();
+		$champions = collect($champions)->unique();
+
+		// dd($champions);
+
+
+		// Gather data from table that corresponds to values
+		if(count($summoners) > 0) {
+			$summoners = DB::table('ddragon_summoners')
+							->whereIn('api_id', $summoners)
+							->get();
+		}
+		if(count($items) > 0) {
+			$items = DB::table('ddragon_items')
+							->whereIn('api_id', $items)
+							->get();
+		}
+		if(count($champions) > 0) {
+			$champions = DB::table('ddragon_champions')
+							->whereIn('api_id', $champions)
+							->get();
+		}
+		$summoners = $summoners->keyBy('api_id');
+		$items = $items->keyBy('api_id');
+		$champions = $champions->keyBy('api_id');
+		// dd($champions);
+
+		foreach ($bets as $bet) {
+			if($bet->type == 'champion_id') {
+				$bet->user_answer = $champions[$bet->user_answer];
+				$bet->answer = $champions[$bet->answer];
+				
+			} if($bet->type == 'champion_id_list_3' || $bet->type == 'champion_id_list_5') {
+				$bet->answer = explode(',', $bet->answer);
+				for ($i = 0; $i < count($bet->answer); ++$i) {
+					$bet->answer[$i] = $champions[$bet->answer[$i]];
+				}
+				$bet->user_answer = explode(',', $bet->user_answer);
+				for ($i = 0; $i < count($bet->user_answer); ++$i) {
+					$bet->user_answer[$i] = $champions[$bet->user_answer[$i]];
+				}
+
+			} if($bet->type == 'item_id_list') {
+				$bet->answer = explode(',', $bet->answer);
+				for ($i = 0; $i < count($bet->answer); ++$i) {
+					$bet->answer[$i] = $items[$bet->answer[$i]];
+				}
+				$bet->user_answer = explode(',', $bet->user_answer);
+				for ($i = 0; $i < count($bet->user_answer); ++$i) {
+					$bet->user_answer[$i] = $items[$bet->user_answer[$i]];
+				}
+
+			} if($bet->type == 'summoner_id_list') {
+				$bet->answer = explode(',', $bet->answer);
+				for ($i = 0; $i < count($bet->answer); ++$i) {
+					$bet->answer[$i] = $summoners[$bet->answer[$i]];
+				}
+				$bet->user_answer = explode(',', $bet->user_answer);
+				for ($i = 0; $i < count($bet->user_answer); ++$i) {
+					$bet->user_answer[$i] = $summoners[$bet->user_answer[$i]];
+				}
+			}
+		}
+		// dd($bets);
 
 		return $bets;
 	}
