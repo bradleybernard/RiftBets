@@ -27,7 +27,6 @@
                     email: {!! Auth::user() ? '\'' . Auth::user()->email . '\'' : 'null' !!},
                     credits: {{ Auth::user() ? Auth::user()->credits : 'null' }},
                     loggedIn: {{ Auth::check() == true ? 'true' : 'false'}},
-                    token: {!! Cookie::has('jwt') ? '\'' . decrypt(Cookie::get('jwt')) . '\'' : 'null' !!}
                 }
             },
         };
