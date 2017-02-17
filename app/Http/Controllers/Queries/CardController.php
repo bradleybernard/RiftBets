@@ -220,9 +220,15 @@ class CardController extends Controller
         ];
 
 
+        $questions = $questions->reject(function($value, $index) {
+            return ($value ? false : true);
+        });
+
         $questions->transform(function ($value, $index) use ($replaces) {
-            foreach($replaces as $replaceK => $replaceV) {
-                $value->description = str_replace($replaceK , $replaceV, $value->description);
+            if(strpos($value->description, '%') !== false) {
+                foreach($replaces as $replaceK => $replaceV) {
+                    $value->description = str_replace($replaceK, $replaceV, $value->description);
+                }
             }
             return $value;
         });
