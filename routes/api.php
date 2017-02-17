@@ -19,6 +19,7 @@ $api->version('v1', function ($api)
 
     $api->get('schedule', 'App\Http\Controllers\Queries\ScheduleController@query');
     $api->get('match', 'App\Http\Controllers\Queries\MatchDetailsController@query');
+    $api->get('schedule/past', 'App\Http\Controllers\Schedule\PastMatchesController@show');
 
     // $api->get('match/bettable', 'App\Http\Controllers\Queries\MatchDetailsController@bettable');
 
