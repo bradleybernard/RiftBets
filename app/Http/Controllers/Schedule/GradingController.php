@@ -25,8 +25,47 @@ class GradingController extends Controller
 		})
 		->join('questions', 'questions.id', '=', 'question_answers.question_id')
 		->whereNotNull('bets.game_id')
+		->where('questions.slug', 'NOT LIKE', '%champion%')
+		->where('questions.slug', 'NOT LIKE', '%ban%')
 		->update([
 			'bet_details.credits_won'	=> DB::raw('IF(bet_details.user_answer = question_answers.answer, bet_details.credits_placed * questions.multiplier, 0)'),
+			'bet_details.is_complete'	=> true,
+			'bet_details.won'			=> DB::raw('IF(bet_details.user_answer = question_answers.answer, 1, 0)'),
+			'bet_details.answer_id'		=> DB::raw('question_answers.id'),
+		]);
+
+		// not yet tested !
+		DB::table('bets')
+		->where('bets.is_complete', false)
+		->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
+		->join('question_answers', function($join) {
+			$join->on('bet_details.question_id', '=', 'question_answers.question_id')
+					->whereColumn('question_answers.game_id', '=','bets.game_id');
+		})
+		->join('questions', 'questions.id', '=', 'question_answers.question_id')
+		->join('math_stats', 'math_stats.api_id', '=', 'bet_details.user_answer') // here
+		->whereNotNull('bets.game_id')
+		->where('questions.slug', 'LIKE', '%champion%')
+		->update([
+			'bet_details.credits_won'	=> DB::raw('IF(bet_details.user_answer = question_answers.answer, bet_details.credits_placed * questions.multiplier * math_stats.pick_scale, 0)'),
+			'bet_details.is_complete'	=> true,
+			'bet_details.won'			=> DB::raw('IF(bet_details.user_answer = question_answers.answer, 1, 0)'),
+			'bet_details.answer_id'		=> DB::raw('question_answers.id'),
+		]);
+
+		DB::table('bets')
+		->where('bets.is_complete', false)
+		->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
+		->join('question_answers', function($join) {
+			$join->on('bet_details.question_id', '=', 'question_answers.question_id')
+					->whereColumn('question_answers.game_id', '=','bets.game_id');
+		})
+		->join('questions', 'questions.id', '=', 'question_answers.question_id')
+		->join('math_stats', 'math_stats.api_id', '=', 'bet_details.user_answer') // here 
+		->whereNotNull('bets.game_id')
+		->where('questions.slug', 'LIKE', '%ban%')
+		->update([
+			'bet_details.credits_won'	=> DB::raw('IF(bet_details.user_answer = question_answers.answer, bet_details.credits_placed * questions.multiplier * math_stats.ban_scale, 0)'),
 			'bet_details.is_complete'	=> true,
 			'bet_details.won'			=> DB::raw('IF(bet_details.user_answer = question_answers.answer, 1, 0)'),
 			'bet_details.answer_id'		=> DB::raw('question_answers.id'),

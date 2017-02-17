@@ -114,7 +114,9 @@ class CardController extends Controller
         $card->reroll_remaining = $rerollRemaining;
     	$card->questions = $questions;
 
-    	$card->champions = DB::table('ddragon_champions')->select(['api_id', 'champion_name', 'image_url'])
+    	$card->champions = DB::table('ddragon_champions')
+            ->join('math_stats', 'math_stats.api_id', '=', 'ddragon_champions.api_id')
+            ->select(['ddragon_champions.api_id', 'ddragon_champions.champion_name', 'ddragon_champions.image_url', 'math_stats.ban_scale', 'math_stats.pick_scale'])
     					->get()
     					->toArray();
 
@@ -220,9 +222,15 @@ class CardController extends Controller
         ];
 
 
+        $questions = $questions->reject(function($value, $index) {
+            return ($value ? false : true);
+        });
+
         $questions->transform(function ($value, $index) use ($replaces) {
-            foreach($replaces as $replaceK => $replaceV) {
-                $value->description = str_replace($replaceK , $replaceV, $value->description);
+            if(strpos($value->description, '%') !== false) {
+                foreach($replaces as $replaceK => $replaceV) {
+                    $value->description = str_replace($replaceK, $replaceV, $value->description);
+                }
             }
             return $value;
         });

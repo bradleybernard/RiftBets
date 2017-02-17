@@ -184,9 +184,26 @@ class BetsController extends Controller
 
 		$matchId = $matchId[0]->api_match_id;
 
-		DB::table('subscribed_users')->insert([
-			'user_id' => $this->auth->user()->id, 'api_match_id' => $matchId
-		]);
+		$fetchSub = DB::table('subscriptions')
+        		  ->where('user_id', $this->auth->user()->id)
+        		  ->where('api_match_id', $request->input('match_id'))
+        		  ->first();
+
+       	if(!$fetchSub)
+       	{
+       		DB::table('subscriptions')->insert([
+    				'user_id'		=> $this->auth->user()->id,
+    				'api_match_id'	=> $matchId,
+    				'is_active'		=> true
+    			]);
+       	}
+       	else
+       	{
+       		DB::table('subscriptions')
+    			->where('user_id', $this->auth->user()->id)
+    			->where('api_match_id', $matchId)
+    			->update(['is_active' => true]);
+       	}
 	}
 
 	public function respond(Request $request)
