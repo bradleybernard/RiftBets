@@ -1,8 +1,8 @@
 <template>
     <ul class="nav navbar-nav navbar-right">
-        <template v-if="!shared.loggedIn">
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
+        <template v-if="!shared.user.loggedIn">
+            <li><a href="/login" @click.prevent="login">Login</a></li>
+            <li><a href="/register" @click.prevent="login">Register</a></li>
         </template>
         <template v-else>
             <li class="dropdown">
@@ -26,7 +26,11 @@ export default {
     methods: {
         logout(e) {
             this.shared.user.loggedIn = false;
-        }
+            this.$cookie.delete('laravel_session');
+        },
+        login(e) {
+            var auth = window.open('/auth/facebook', '_blank', 'width=300,height=700');
+        },
     }
 }
 </script>

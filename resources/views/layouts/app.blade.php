@@ -27,10 +27,19 @@
                     email: {!! Auth::user() ? '\'' . Auth::user()->email . '\'' : 'null' !!},
                     credits: {{ Auth::user() ? Auth::user()->credits : 'null' }},
                     loggedIn: {{ Auth::check() == true ? 'true' : 'false'}},
-                    token: {!! Cookie::has('jwt') ? '\'' . decrypt(Cookie::get('jwt')) . '\'' : 'null' !!}
+                    token: null,
                 }
             },
         };
+
+        function  deleteCookie(name) {
+            document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+        function setState(user) {
+            console.log('state set');
+            store.state.user = user;
+        }
     </script>
 </head>
 <body>
