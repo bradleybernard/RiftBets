@@ -52,9 +52,14 @@ class AuthController extends Controller
         $token = JWTAuth::fromUser($user);
         Cookie::queue('jwt', $token, 60 * 24 * 365);
 
-        return $this->response->array([
+        $payload = json_encode([
+            'name' => $user->name,
+            'email' => $user->email,
+            'credits' => $user->credits,
+            'loggedIn' => true,
             'token' => $token,
-            'user'  => $user,
         ]);
+
+        return view('auth.vue')->with('payload', $payload);
     }
 }

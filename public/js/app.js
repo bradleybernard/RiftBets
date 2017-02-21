@@ -11262,7 +11262,7 @@ var app = new Vue({
 /* 12 */
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed: ModuleBuildError: Module build failed: Error: Missing binding /home/vagrant/riftbets/node_modules/node-sass/vendor/linux-x64-48/binding.node\nNode Sass could not find a binding for your current environment: Linux 64-bit with Node.js 6.x\n\nFound bindings for the following environments:\n  - OS X 64-bit with Node.js 7.x\n\nThis usually happens because your environment has changed since running `npm install`.\nRun `npm rebuild node-sass` to build the binding for your current environment.\n    at module.exports (/home/vagrant/riftbets/node_modules/node-sass/lib/binding.js:15:13)\n    at Object.<anonymous> (/home/vagrant/riftbets/node_modules/node-sass/lib/index.js:14:35)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at Object.<anonymous> (/home/vagrant/riftbets/node_modules/sass-loader/index.js:4:12)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:13:17)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at /home/vagrant/riftbets/node_modules/webpack/lib/NormalModule.js:141:35\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:170:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:27:11)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at runLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:362:2)\n    at NormalModule.doBuild (/home/vagrant/riftbets/node_modules/webpack/lib/NormalModule.js:129:2)\n    at NormalModule.build (/home/vagrant/riftbets/node_modules/webpack/lib/NormalModule.js:180:15)\n    at Compilation.buildModule (/home/vagrant/riftbets/node_modules/webpack/lib/Compilation.js:142:10)\n    at moduleFactory.create (/home/vagrant/riftbets/node_modules/webpack/lib/Compilation.js:424:9)\n    at /home/vagrant/riftbets/node_modules/webpack/lib/NormalModuleFactory.js:242:4\n    at /home/vagrant/riftbets/node_modules/webpack/lib/NormalModuleFactory.js:93:13\n    at /home/vagrant/riftbets/node_modules/tapable/lib/Tapable.js:204:11\n    at NormalModuleFactory.params.normalModuleFactory.plugin (/home/vagrant/riftbets/node_modules/webpack/lib/CompatibilityPlugin.js:52:5)\n    at NormalModuleFactory.applyPluginsAsyncWaterfall (/home/vagrant/riftbets/node_modules/tapable/lib/Tapable.js:208:13)\n    at onDoneResolving (/home/vagrant/riftbets/node_modules/webpack/lib/NormalModuleFactory.js:68:11)\n    at onDoneResolving (/home/vagrant/riftbets/node_modules/webpack/lib/NormalModuleFactory.js:189:6)\n    at _combinedTickCallback (internal/process/next_tick.js:67:7)\n    at process._tickCallback (internal/process/next_tick.js:98:9)");
+throw new Error("Module build failed: ModuleBuildError: Module build failed: Error: Missing binding /home/vagrant/riftbets/node_modules/node-sass/vendor/linux-x64-48/binding.node\nNode Sass could not find a binding for your current environment: Linux 64-bit with Node.js 6.x\n\nFound bindings for the following environments:\n  - OS X 64-bit with Node.js 7.x\n\nThis usually happens because your environment has changed since running `npm install`.\nRun `npm rebuild node-sass` to build the binding for your current environment.\n    at module.exports (/home/vagrant/riftbets/node_modules/node-sass/lib/binding.js:15:13)\n    at Object.<anonymous> (/home/vagrant/riftbets/node_modules/node-sass/lib/index.js:14:35)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at Object.<anonymous> (/home/vagrant/riftbets/node_modules/sass-loader/index.js:4:12)\n    at Module._compile (module.js:570:32)\n    at Object.Module._extensions..js (module.js:579:10)\n    at Module.load (module.js:487:32)\n    at tryModuleLoad (module.js:446:12)\n    at Function.Module._load (module.js:438:3)\n    at Module.require (module.js:497:17)\n    at require (internal/module.js:20:19)\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:13:17)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at /home/vagrant/riftbets/node_modules/webpack/lib/NormalModule.js:141:35\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:170:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:27:11)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:165:10)\n    at /home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:173:18\n    at loadLoader (/home/vagrant/riftbets/node_modules/loader-runner/lib/loadLoader.js:36:3)\n    at iteratePitchingLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:169:2)\n    at runLoaders (/home/vagrant/riftbets/node_modules/loader-runner/lib/LoaderRunner.js:362:2)\n    at NormalModule.doBuild (/home/vagrant/riftbets/node_modules/webpack/lib/NormalModule.js:129:2)\n    at NormalModule.build (/home/vagrant/riftbets/node_modules/webpack/lib/NormalModule.js:180:15)\n    at Compilation.buildModule (/home/vagrant/riftbets/node_modules/webpack/lib/Compilation.js:142:10)\n    at moduleFactory.create (/home/vagrant/riftbets/node_modules/webpack/lib/Compilation.js:424:9)\n    at /home/vagrant/riftbets/node_modules/webpack/lib/NormalModuleFactory.js:242:4\n    at /home/vagrant/riftbets/node_modules/webpack/lib/NormalModuleFactory.js:93:13\n    at /home/vagrant/riftbets/node_modules/tapable/lib/Tapable.js:204:11\n    at NormalModuleFactory.params.normalModuleFactory.plugin (/home/vagrant/riftbets/node_modules/webpack/lib/CompatibilityPlugin.js:52:5)\n    at NormalModuleFactory.applyPluginsAsyncWaterfall (/home/vagrant/riftbets/node_modules/tapable/lib/Tapable.js:208:13)\n    at onDoneResolving (/home/vagrant/riftbets/node_modules/webpack/lib/NormalModuleFactory.js:68:11)\n    at onDoneResolving (/home/vagrant/riftbets/node_modules/webpack/lib/NormalModuleFactory.js:189:6)\n    at _combinedTickCallback (internal/process/next_tick.js:67:7)");
 
 /***/ }),
 /* 13 */
@@ -12161,7 +12161,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         login: function login(e) {
-            auth = window.open('/auth/facebook', '_blank', 'width=600,height=400');
+
+            var auth = window.open('/auth/facebook', '_blank', 'width=600,height=400');
         }
     }
 };
@@ -12201,6 +12202,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     methods: {
         logout: function logout(e) {
             this.shared.user.loggedIn = false;
+            this.$cookie.delete('laravel_session');
+        },
+        login: function login(e) {
+            var auth = window.open('/auth/facebook', '_blank', 'width=300,height=700');
         }
     }
 };
@@ -12233,6 +12238,9 @@ __webpack_require__(35);
  */
 
 window.Vue = __webpack_require__(45);
+
+var VueCookie = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"vue-cookie\""); e.code = 'MODULE_NOT_FOUND';; throw e; }()));
+window.Vue.use(VueCookie);
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -36757,7 +36765,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "row"
   }, [_c('div', {
     staticClass: "col-xs-12"
-  }, [(!_vm.shared.loggedIn) ? _c('div', {
+  }, [(!_vm.shared.user.loggedIn) ? _c('div', {
     staticClass: "btn btn-success btn-block",
     on: {
       "click": _vm.login
@@ -36810,7 +36818,27 @@ if (false) {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('ul', {
     staticClass: "nav navbar-nav navbar-right"
-  }, [(!_vm.shared.loggedIn) ? [_vm._m(0), _vm._v(" "), _vm._m(1)] : [_c('li', {
+  }, [(!_vm.shared.user.loggedIn) ? [_c('li', [_c('a', {
+    attrs: {
+      "href": "/login"
+    },
+    on: {
+      "click": function($event) {
+        $event.preventDefault();
+        _vm.login($event)
+      }
+    }
+  }, [_vm._v("Login")])]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "href": "/register"
+    },
+    on: {
+      "click": function($event) {
+        $event.preventDefault();
+        _vm.login($event)
+      }
+    }
+  }, [_vm._v("Register")])])] : [_c('li', {
     staticClass: "dropdown"
   }, [_c('a', {
     staticClass: "dropdown-toggle",
@@ -36838,19 +36866,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }
   }, [_vm._v("Logout")])])])])]], 2)
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('li', [_c('a', {
-    attrs: {
-      "href": "/login"
-    }
-  }, [_vm._v("Login")])])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('li', [_c('a', {
-    attrs: {
-      "href": "/register"
-    }
-  }, [_vm._v("Register")])])
-}]}
+},staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()

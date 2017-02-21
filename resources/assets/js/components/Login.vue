@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <div v-if="!shared.loggedIn" class="btn btn-success btn-block"  @click="login">Login with Facebook</div>
+                <div v-if="!shared.user.loggedIn" class="btn btn-success btn-block"  @click="login">Login with Facebook</div>
                 <div v-else class="alert alert-success">
                     <p>You are already logged in!</p>
                 </div>
@@ -18,8 +18,9 @@ export default {
     },
     methods: {
         login(e) {
-            auth = window.open('/auth/facebook', '_blank', 'width=600,height=400');
-            
+
+           var auth = window.open('/auth/facebook', '_blank', 'width=600,height=400');
+
         },
     },
 }
