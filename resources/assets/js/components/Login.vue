@@ -18,7 +18,7 @@ export default {
     },
     methods: {
         login(e) {
-            auth = window.open('/auth/facebook', '_blank', 'width=300,height=700');
+            auth = window.open('/auth/facebook', '_blank', 'width=600,height=400');
             
         },
     },
