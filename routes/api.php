@@ -19,6 +19,7 @@ $api->version('v1', function ($api)
 
     $api->get('schedule', 'App\Http\Controllers\Queries\ScheduleController@query');
     $api->get('match', 'App\Http\Controllers\Queries\MatchDetailsController@query');
+    $api->get('schedule/past', 'App\Http\Controllers\Schedule\PastMatchesController@show');
 
     // $api->get('match/bettable', 'App\Http\Controllers\Queries\MatchDetailsController@bettable');
 
@@ -26,6 +27,7 @@ $api->version('v1', function ($api)
     $api->get('leaderboards/rank', 'App\Http\Controllers\Leaderboards\LeaderboardsController@rank');
     $api->get('leaderboards/around', 'App\Http\Controllers\Leaderboards\LeaderboardsController@around');
     $api->get('profile', 'App\Http\Controllers\Queries\UserProfileController@query');
+    $api->get('bets/reply', 'App\Http\Controllers\Bets\BetsController@respond');
 
     $api->group(['middleware' => 'api.auth'], function ($api) {
         $api->post('bets/create', 'App\Http\Controllers\Bets\BetsController@bet');

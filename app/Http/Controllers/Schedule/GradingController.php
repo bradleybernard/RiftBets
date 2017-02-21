@@ -136,8 +136,8 @@ class GradingController extends Controller
 		// $gameId = '3b124078-c557-4e55-a793-00cbd1b9dc0c';
 
 		// Test data values
-		$gameIdLong = 'eddd9430-f53c-4227-8b5f-bf4fb7b39f05';
-		$gameId = '1001890201'; //gets filled in later but this is testing
+		$gameIdLong = '403eb82c-16a9-40c3-9faa-9cea4b287f2c';
+		$gameId = '1002040412'; //gets filled in later but this is testing
 
 		$bets = [
 			// Game duration: 2920/60 = 48 mins
