@@ -50,7 +50,7 @@ class AuthController extends Controller
         }
 
         $token = JWTAuth::fromUser($user);
-        Cookie::queue('jwt', $token, 60 * 24 * 365);
+        Cookie::queue('jwt', $token, 60 * 24 * 365, '/', env('SESSION_DOMAIN'), false, false);
 
         $payload = json_encode([
             'name' => $user->name,
