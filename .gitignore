@@ -9,3 +9,4 @@ Homestead.yaml
 /.vagrant
 /auth_cred
 /test
+public/css/app.css
