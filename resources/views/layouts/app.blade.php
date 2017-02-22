@@ -65,9 +65,10 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        &nbsp;
+                        <li><a href="/schedule">Schedule</a></li>
+                        <li><a href="#">Bets</a></li>
+                        <li><a href="#">Leaderboard</a></li>
                     </ul>
-
                     <!-- Right Side Of Navbar -->
                     <navbar></navbar>
                 </div>

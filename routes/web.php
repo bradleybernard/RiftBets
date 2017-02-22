@@ -19,6 +19,10 @@ Route::get('/grade', 'Schedule\GradingController@grade');
 Route::get('/', function () {
     return view('home');
 });
+Route::get('/schedule', function () {
+    return view('schedule');
+});
+
 
 //Delete soon plz
 Route::get('stats', 'Scrape\StatsController@scrape');
