@@ -27,6 +27,7 @@ export default {
         logout(e) {
             this.shared.user.loggedIn = false;
             this.$cookie.delete('laravel_session');
+            this.$cookie.delete('laravel_session', {domain: 'riftbets.dev'});
         },
         login(e) {
             var auth = window.open('/auth/facebook', '_blank', 'width=300,height=700');
