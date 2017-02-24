@@ -22,10 +22,26 @@ class PastMatchesController extends Controller
     * Returns: JSON with past matches and record
     ************************************************/
 
-    public function show()
+    public function show(Request $request)
     {
     	//
-    	dd('hello');
+        $teamID = $request['teamID'];
+
+        // Initialize validator class
+        // Checks if match id is in DB
+        $validator = Validator::make($request->all(), [
+            'teamID' => 'exists:teams,api_id'
+        ]);
+
+        if ($validator->fails()) {
+            throw new \Dingo\Api\Exception\ResourceException('Invalid match id.', $validator->errors());
+        }
+
+        $test = DB::table('teams')->select('name')->where('api_id', $teamID)->get();
+    	dd($test);
+
+        // schedule.scheduled_time, matches.score_one/two, rosters.name, teams.logo_url
+        // game_team_stats -> win?-flag, 
 
     }
 }
