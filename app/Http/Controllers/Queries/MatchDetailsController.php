@@ -33,8 +33,7 @@ class MatchDetailsController extends Controller
         }
 
         // Grab the details of match from DB
-    	$columns = ['matches.api_id_long', 'matches.name', 'resource_type', 'matches.state','matches.api_resource_id_one', 'matches.api_resource_id_two',
-    			 'matches.score_one', 'matches.score_two'];
+    	$columns = ['matches.api_id_long', 'matches.name', 'resource_type', 'matches.state','matches.api_resource_id_one', 'matches.api_resource_id_two', 'matches.score_one', 'matches.score_two'];
 
     	$rows = DB::table('matches')->select($columns)
     			->where('matches.api_id_long', $matchId)
