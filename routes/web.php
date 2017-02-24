@@ -22,7 +22,12 @@ Route::get('/', function () {
 Route::get('/schedule', function () {
     return view('schedule');
 });
-
+Route::get('/bets', function () {
+    return view('bets');
+});
+Route::get('/leaderboard', function () {
+    return view('leaderboard');
+});
 
 //Delete soon plz
 Route::get('stats', 'Scrape\StatsController@scrape');
