@@ -19,13 +19,16 @@ Route::get('/grade', 'Schedule\GradingController@grade');
 Route::get('/', function () {
     return view('home');
 });
+
 Route::get('/schedule', function () {
     return view('schedule');
 });
 
+Route::get('/userbets', function() {
+    return view('userbets');
+});
 
 //Delete soon plz
 Route::get('stats', 'Scrape\StatsController@scrape');
 Route::get('/betsTest', 'Schedule\GradingController@bets');
-
 Route::get('/test', 'TestBroadcastController@test');

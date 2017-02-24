@@ -19,6 +19,7 @@ require('bootstrap-sass');
 
 window.Vue = require('vue');
 
+// VueCookie
 var VueCookie = require('vue-cookie');
 window.Vue.use(VueCookie);
 
@@ -33,6 +34,9 @@ window.axios = require('axios');
 window.axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest'
 };
+
+// Let Vue use axios as this.$http
+window.Vue.prototype.$http = axios;
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
