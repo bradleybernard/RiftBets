@@ -19,12 +19,19 @@ Route::get('/grade', 'Schedule\GradingController@grade');
 Route::get('/', function () {
     return view('home');
 });
+
 Route::get('/schedule', function () {
     return view('schedule');
 });
+
+Route::get('/userbets', function() {
+    return view('userbets');
+});
+
 Route::get('/bets', function () {
     return view('bets');
 });
+
 Route::get('/leaderboard', function () {
     return view('leaderboard');
 });
@@ -32,5 +39,4 @@ Route::get('/leaderboard', function () {
 //Delete soon plz
 Route::get('stats', 'Scrape\StatsController@scrape');
 Route::get('/betsTest', 'Schedule\GradingController@bets');
-
 Route::get('/test', 'TestBroadcastController@test');

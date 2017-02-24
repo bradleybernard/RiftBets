@@ -9,4 +9,7 @@ Homestead.yaml
 /.vagrant
 /auth_cred
 /test
-public/css/app.css
+/public/css/app.*.css
+/public/js/app.*.js
+/public/mix-manifest.json
+npm-debug.log
