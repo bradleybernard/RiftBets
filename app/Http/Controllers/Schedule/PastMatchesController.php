@@ -37,11 +37,60 @@ class PastMatchesController extends Controller
             throw new \Dingo\Api\Exception\ResourceException('Invalid match id.', $validator->errors());
         }
 
-        $test = DB::table('teams')->select('name')->where('api_id', $teamID)->get();
-    	dd($test);
 
-        // schedule.scheduled_time, matches.score_one/two, rosters.name, teams.logo_url
-        // game_team_stats -> win?-flag, 
+        // These are the matches where the interesting team was team one
+        $team_one = DB::table('teams as t1')            
+            ->join('rosters as r1', 't1.api_id', '=', 'r1.api_team_id')
+            ->join('matches', 'matches.api_resource_id_one', '=', 'r1.api_id_long')
+            ->join('rosters as r2', 'matches.api_resource_id_two', '=', 'r2.api_id_long')
+            ->join('teams as t2', 't2.api_id', '=', 'r2.api_team_id')
+            ->join('schedule', 'schedule.api_match_id', '=', 'matches.api_id_long')
+            ->select(DB::raw('
+                r1.name as team_one, t1.logo_url as team_one_logo,
+                r2.name as team_two, t2.logo_url as team_two_logo,
+                matches.score_one, matches.score_two, 
+                (matches.score_one > matches.score_two) as WON, matches.api_id_long, schedule.scheduled_time
+                '))
+            ->where('t1.api_id', $teamID)
+            ->whereNotNull('matches.score_one');
+
+        // These are the matches where the interesting team was team two
+        $team_two = DB::table('teams as t2')            
+            ->join('rosters as r2', 't2.api_id', '=', 'r2.api_team_id')
+            ->join('matches', 'matches.api_resource_id_two', '=', 'r2.api_id_long')
+            ->join('rosters as r1', 'matches.api_resource_id_one', '=', 'r1.api_id_long')
+            ->join('teams as t1', 't1.api_id', '=', 'r1.api_team_id')
+            ->join('schedule', 'schedule.api_match_id', '=', 'matches.api_id_long')
+            ->select(DB::raw('
+                r1.name as team_one, t1.logo_url as team_one_logo,
+                r2.name as team_two, t2.logo_url as team_two_logo,
+                matches.score_one, matches.score_two, 
+                (matches.score_one < matches.score_two) as WON, matches.api_id_long, schedule.scheduled_time
+                '))
+            ->where('t2.api_id', $teamID)
+            ->whereNotNull('matches.score_one');
+
+        $all_matches = $team_two        
+            ->union($team_one)
+            ->get();
+
+    	dd($all_matches);
+
+    // things to do next:
+    // order by time, take top 5, make json
+
+    // sample entry
+    // {#370 ▼
+    //   +"team_one": "FLY"
+    //   +"team_one_logo": "https://lolstatic-a.akamaihd.net/esports-assets/production/team/flyquest-89bnqpyh.png"
+    //   +"team_two": "TSM"
+    //   +"team_two_logo": "https://lolstatic-a.akamaihd.net/esports-assets/production/team/team-solomid-cg2byxoe.png"
+    //   +"score_one": 0
+    //   +"score_two": 1
+    //   +"WON": 1
+    //   +"api_id_long": "bbbad703-2f40-4b4d-b9a5-a1c7ccf7e9dc"
+    //   +"scheduled_time": "2017-02-19 20:00:00"
+    // }
 
     }
 }
