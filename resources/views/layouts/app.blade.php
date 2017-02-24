@@ -32,12 +32,7 @@
             },
         };
 
-        function  deleteCookie(name) {
-            document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        }
-
         function setState(user) {
-            console.log('state set');
             store.state.user = user;
         }
     </script>
@@ -46,9 +41,12 @@
     <div id="app">
         <!-- Navbar.vue Component -->
         <navbar></navbar>
+
+        <!-- Testing schedule -->
+        <game-schedule></game-schedule>
         @yield('content')
     </div>
-    <script src="/js/app.js"></script>
+    <script src="/js/app.js?rdtfvygbnhujk"></script>
     <!-- Scripts -->
 </body>
 </html>

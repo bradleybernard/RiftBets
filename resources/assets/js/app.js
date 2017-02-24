@@ -16,6 +16,7 @@ require('./bootstrap');
 Vue.component('example', require('./components/Example.vue'));
 Vue.component('login', require('./components/Login.vue'));
 Vue.component('navbar', require('./components/Navbar.vue'));
+Vue.component('game-schedule', require('./components/Schedule.vue'));
 
 const app = new Vue({
     el: '#app',
