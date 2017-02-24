@@ -26,7 +26,8 @@ class UserBetsController extends Controller
 			->join('bets', 'bets.user_id', '=', 'users.id')
 			->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
 			->join('questions', 'questions.id', '=', 'bet_details.question_id')
-			->join('question_answers', 'question_answers.question_id', '=', 'bet_details.question_id')
+			->join('question_answers', 'question_answers.question_id', '=', 'bet_details.answer_id')
+			->where('question_answers.game_id', '=', DB::raw('bets.game_id'))
 			->where('users.id', $user->id)
 			->get();
 		
