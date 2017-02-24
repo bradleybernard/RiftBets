@@ -28,6 +28,14 @@ Route::get('/userbets', function() {
     return view('userbets');
 });
 
+Route::get('/bets', function () {
+    return view('bets');
+});
+
+Route::get('/leaderboard', function () {
+    return view('leaderboard');
+});
+
 //Delete soon plz
 Route::get('stats', 'Scrape\StatsController@scrape');
 Route::get('/betsTest', 'Schedule\GradingController@bets');

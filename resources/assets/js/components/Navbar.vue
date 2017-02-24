@@ -9,8 +9,8 @@
         </div>
         <ul class="nav navbar-nav">
             <li><a href="/schedule">Schedule</a></li>
-            <li><a href="#">Bets</a></li>
-            <li><a href="#">Leaderboard</a></li>
+            <li><a href="/bets">Bets</a></li>
+            <li><a href="/leaderboard">Leaderboard</a></li>
         </ul>
         <!-- Right Side Of Navbar -->
         <ul class="nav navbar-nav navbar-right">
