@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
 use Validator;
+use App\Jobs\SendMail;
 
 class SubscriptionsController extends Controller
 {
@@ -44,7 +45,7 @@ class SubscriptionsController extends Controller
         	DB::table('subscriptions')
     			->where('user_id', $this->auth->user()->id)
     			->where('api_match_id', $request->input('match_id'))
-    			->update(['is_active' => $request->input('status')]);
+    	 		->update(['is_active' => $request->input('status')]);
         } else {
         	if($request->input('status')) {
         		DB::table('subscriptions')->insert([
@@ -63,6 +64,8 @@ class SubscriptionsController extends Controller
         	'match_id' 	=> $subscription->api_match_id,
         	'is_susbscribed'	=> $subscription->is_active
         ];
+
+        dispatch(new SendMail);
 
         return $this->response->array($response);
     }

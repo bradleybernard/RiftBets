@@ -194,6 +194,7 @@ class BetsController extends Controller
        		DB::table('subscriptions')->insert([
     				'user_id'		=> $this->auth->user()->id,
     				'api_match_id'	=> $matchId,
+    				'is_bet'		=> true,
     				'is_active'		=> true
     			]);
        	}
@@ -202,7 +203,7 @@ class BetsController extends Controller
        		DB::table('subscriptions')
     			->where('user_id', $this->auth->user()->id)
     			->where('api_match_id', $matchId)
-    			->update(['is_active' => true]);
+    			->update(['is_active' => true, 'is_bet' => true]);
        	}
 	}
 

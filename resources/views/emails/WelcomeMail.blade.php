@@ -1,12 +1,14 @@
 @component('mail::message')
-# Introduction
 
-The body of your message.
-
-@component('mail::button', ['url' => ''])
-Button Text
-@endcomponent
+<div style="text-align:center; font-weight:bold;"> Welcome to RiftBets, {{ $name }}!</div>
+<br>
+Thank you for signing up for RiftBets!
 
 Thanks,<br>
-{{ config('app.name') }}
+The {{ config('app.name') }} Team
+
+@component('mail::button', ['url' => ''])
+Go to RiftBets
+@endcomponent
+
 @endcomponent
