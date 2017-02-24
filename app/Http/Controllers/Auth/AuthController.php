@@ -9,6 +9,9 @@ use App\User;
 use App\UserStats;
 use App\Leaderboard;
 
+use Mail;
+use App\Mail\WelcomeMail;
+
 use JWTAuth;
 use Redis;
 use Socialite;
@@ -47,6 +50,8 @@ class AuthController extends Controller
             foreach($leaderboards as $leaderboard) {
                 $redis->ZADD($leaderboard['redis_key'], 0, $user->id);
             }
+            Mail::to($this->pry($facebook, 'email'))
+                  ->queue(new WelcomeMail($this->pry($facebook, 'name')));
         }
 
         $token = JWTAuth::fromUser($user);
