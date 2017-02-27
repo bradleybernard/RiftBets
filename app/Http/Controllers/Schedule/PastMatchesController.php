@@ -91,6 +91,7 @@ class PastMatchesController extends Controller
         $all_matches = $all_matches->slice(0, 5);  
 
         foreach ($all_matches as $match) {
+
             $team_one_wins = DB::table('games')
             ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
             ->where('games.api_match_id', '=', $match->api_id_long)
@@ -100,33 +101,22 @@ class PastMatchesController extends Controller
                 '))
             ->get()
             ->toArray();
-            $key = 'sum';
-            dd(array_first($team_one_wins));
-            $match->score_one = $team_one_wins[0];
+            $match->score_one = $team_one_wins[0]->sum;
+
+            $team_two_wins = DB::table('games')
+            ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
+            ->where('games.api_match_id', '=', $match->api_id_long)
+            ->where('stats.team_id', '=', 200)
+            ->select(DB::raw('
+                sum(win) as sum
+                '))
+            ->get()
+            ->toArray();
+            $match->score_two = $team_two_wins[0]->sum;
+
         }
-
-        // foreach ($all_matches as $match) {
-        //     $team_two_wins = DB::table('games')
-        //     ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
-        //     ->where('games.api_match_id', '=', $match->api_id_long)
-        //     ->where('stats.team_id', '=', 200)
-        //     ->select(DB::raw('
-        //         sum(win) as sum
-        //         '))
-        //     ->get('sum');
-        //     $match->score_two = $team_two_wins[0]['sum'];
-        // }
-
-
-        dd($all_matches);      
-        // $all_matches = $all_matches->toJson();
-        //  dd($all_matches);
-        return response()->json($all_matches); 
-
-    // things to do next:
-    // order by time, take top 5, make json
-
-
+        
+        return $this->response->array($all_matches);
 
     }
 }
