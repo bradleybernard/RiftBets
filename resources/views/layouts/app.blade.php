@@ -41,9 +41,6 @@
     <div id="app">
         <!-- Navbar.vue Component -->
         <navbar></navbar>
-
-        <!-- Testing schedule -->
-        <game-schedule></game-schedule>
         @yield('content')
     </div>
     <script src="{{ mix('/js/app.js') }}"></script>
