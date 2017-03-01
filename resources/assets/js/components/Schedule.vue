@@ -1,11 +1,28 @@
 <template>
 
 <div v-if="fetched == true">
-    Schedule component
     <div v-for="(item, key) in stats">
-        {{ key }}
-        <div v-for="match in item" style="color: white">
-            {{ match.name }}
+        <h1>
+        <!-- string.charAt(0).toUpperCase() + string.slice(1); -->
+        {{ key }}: {{ item[0].block_prefix.charAt(0).toUpperCase() + item[0].block_prefix.slice(1) }} {{ item[0].block_label }} {{ item[0].sub_block_prefix }} {{ item[0].sub_block_label }}
+        </h1>
+        <div v-for="match in item" style="color: white; padding-top: 1em">
+            <div style="width:81.5em; height:11em; border:1px solid #000;  vertical-align: middle;">
+                <h1 class="row" style="padding-left: 1em; display: inline-block;">
+                    <div class="col-md-1" style="padding-top: 1em">
+                        <span class="label label-default">{{ match.scheduled_time.substring(10,16) }}</span>
+                    </div>
+                    <div class="col-md-2 col-md-offset-2">
+                        <img :src="match.resources.one.logo_url" style="max-width: 70%;"></img>
+                    </div>
+                    <div class="col-md-3" style="padding-top: 1em">
+                        <span style="">{{ match.name }}</span>
+                    </div>
+                    <div class="col-md-2">
+                        <img :src="match.resources.two.logo_url" style="max-width: 70%"></img>
+                    </div>
+                </h1>
+            </div>
         </div>
         <hr>
     </div>

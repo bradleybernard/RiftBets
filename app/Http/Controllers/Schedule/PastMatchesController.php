@@ -74,23 +74,49 @@ class PastMatchesController extends Controller
             ->union($team_one)
             ->get();
 
-    	dd($all_matches);
+            // sample entry
+            // {#370 ▼
+            //   +"team_one": "FLY"
+            //   +"team_one_logo": "https://lolstatic-a.akamaihd.net/esports-assets/production/team/flyquest-89bnqpyh.png"
+            //   +"team_two": "TSM"
+            //   +"team_two_logo": "https://lolstatic-a.akamaihd.net/esports-assets/production/team/team-solomid-cg2byxoe.png"
+            //   +"score_one": 0
+            //   +"score_two": 1
+            //   +"WON": 1
+            //   +"api_id_long": "bbbad703-2f40-4b4d-b9a5-a1c7ccf7e9dc"
+            //   +"scheduled_time": "2017-02-19 20:00:00"
+            // }
 
-    // things to do next:
-    // order by time, take top 5, make json
+    	$all_matches = $all_matches->sortByDesc('scheduled_time');
+        $all_matches = $all_matches->slice(0, 5);  
 
-    // sample entry
-    // {#370 ▼
-    //   +"team_one": "FLY"
-    //   +"team_one_logo": "https://lolstatic-a.akamaihd.net/esports-assets/production/team/flyquest-89bnqpyh.png"
-    //   +"team_two": "TSM"
-    //   +"team_two_logo": "https://lolstatic-a.akamaihd.net/esports-assets/production/team/team-solomid-cg2byxoe.png"
-    //   +"score_one": 0
-    //   +"score_two": 1
-    //   +"WON": 1
-    //   +"api_id_long": "bbbad703-2f40-4b4d-b9a5-a1c7ccf7e9dc"
-    //   +"scheduled_time": "2017-02-19 20:00:00"
-    // }
+        foreach ($all_matches as $match) {
+
+            $team_one_wins = DB::table('games')
+            ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
+            ->where('games.api_match_id', '=', $match->api_id_long)
+            ->where('stats.team_id', '=', 100)
+            ->select(DB::raw('
+                sum(win) as sum
+                '))
+            ->get()
+            ->toArray();
+            $match->score_one = $team_one_wins[0]->sum;
+
+            $team_two_wins = DB::table('games')
+            ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
+            ->where('games.api_match_id', '=', $match->api_id_long)
+            ->where('stats.team_id', '=', 200)
+            ->select(DB::raw('
+                sum(win) as sum
+                '))
+            ->get()
+            ->toArray();
+            $match->score_two = $team_two_wins[0]->sum;
+
+        }
+        
+        return $this->response->array($all_matches);
 
     }
 }

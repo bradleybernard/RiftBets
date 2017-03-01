@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
-    <span>Schedule displayed here</span>
+    <!-- Testing schedule -->
+    <game-schedule></game-schedule>
 </div>
 @endsection
