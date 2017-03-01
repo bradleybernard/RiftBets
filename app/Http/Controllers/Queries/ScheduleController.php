@@ -18,7 +18,7 @@ class ScheduleController extends Controller
             'block_prefix', 'block_label', 'sub_block_prefix', 'sub_block_label', 'scheduled_time', 'matches.name',
             'matches.state', 'api_resource_id_one', 'api_resource_id_two', 'resource_type', 'score_one', 'score_two',
             'brackets.name as bracket_name', 'brackets.bracket_identifier', 'brackets.bracket_rounds',
-            'brackets.match_identifier', 'brackets.match_best_of', 'matches.api_id_long'
+            'brackets.match_identifier', 'brackets.match_best_of', 'matches.api_id_long', 'leagues.slug as league_id'
         ];
 
         $rows = DB::table('schedule')->select($columns)
