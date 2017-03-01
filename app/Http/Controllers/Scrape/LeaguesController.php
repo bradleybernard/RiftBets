@@ -19,7 +19,7 @@ class LeaguesController extends ScrapeController
 
     public function scrape()
     {
-        $leagues = [self::NA_LCS_LEAGUE, self::EU_LCS_LEAGUE, self::LCK_LEAGUE];
+        $leagues = [self::NA_LCS_LEAGUE, self::EU_LCS_LEAGUE];
 
         foreach($leagues as $leagueId) {
             
