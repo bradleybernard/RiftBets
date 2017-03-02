@@ -337,6 +337,14 @@ class MatchDetailsController extends Controller
             });
         }
 
+        $league = DB::table('schedule')->select(['leagues.slug', 'leagues.name'])
+                ->where('api_match_id', $rows[0]->api_id_long)
+                ->join('leagues', 'leagues.api_id', '=', 'api_league_id')
+                ->get();
+
+        $rows[0]->league = $league;
+        // dd($rows[0]);
+
         return $this->response->array((array)$rows->first());
     }
 
