@@ -32,6 +32,8 @@ Route::get('/bets', function () {
     return view('bets');
 });
 
+Route::get('match/{apiIdLong}', 'Frontend\GamePageController@view');
+
 Route::get('/leaderboard', function () {
     return view('leaderboard');
 });
