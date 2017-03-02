@@ -30,6 +30,7 @@ $api->version('v1', ['middleware' => 'jwt'], function ($api)
     $api->get('bets/reply', 'App\Http\Controllers\Bets\BetsController@respond');
 
     $api->group(['middleware' => 'api.auth'], function ($api) {
+        $api->get('bets/gamebet', 'App\Http\Controllers\Bets\BetsController@gameBet');
         $api->post('bets/create', 'App\Http\Controllers\Bets\BetsController@bet');
         $api->get('bets/response', 'App\Http\Controllers\Queries\UserProfileController@query');
         $api->get('user/bets', 'App\Http\Controllers\Queries\UserBetsController@query');

@@ -10,7 +10,8 @@
     export default {
         data: function() {
             return  {
-                detail: null,
+                shared: store.state,
+                bet: null,
             }
         },
         methods: {
