@@ -2,17 +2,17 @@
     <div class="schedule">
         <div class="row">
             <div class="col-lg-12">
-                <select v-model="selected" selected="all">
-                    <option v-for="league in leagues" v-bind:value="league.value">
-                        {{ league.text }}
+                <select v-model="league" selected="all">
+                    <option v-for="_league in leagues" v-bind:value="_league.value">
+                        {{ _league.text }}
                     </option>
                 </select>
-                <span>Selected: {{ selected }}</span>
+                <span>Selected: {{ league }}</span>
                 <span>Week: </span>
                 
-                <label v-for="week in weeks"> 
-                    <input type="radio" v-model="picked" v-bind:value="week.value"> 
-                    {{ week.text }}
+                <label v-for="_week in weeks"> 
+                    <input type="radio" v-model="week" v-bind:value="_week.value"> 
+                    {{ _week.text }}
                 </label>
             </div>
         </div>
@@ -25,7 +25,7 @@
                     </h1>
                 </div>
             </div>
-            <div class="row" v-if="match.league_id == selected || selected == 'all'"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
+            <div class="row" v-if="match.league_id == league || league == 'all'"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
                 <div class="col-md-2">
                     <span class="label label-default">{{ match.scheduled_time.substring(10,16) }}</span>
                 </div>
@@ -52,16 +52,17 @@ export default {
     data() {
         return {
             shared: store.state,
+            fetched: false,
             stats: [],
             shownStats: [],
-            fetched: false,
+            league: 'all',
             leagues: [
                 {text: 'All', value: 'all'},
                 {text: 'NA-LCS', value: 'na-lcs'},
                 {text: 'EU-LCS', value: 'eu-lcs'},
                 {text: 'LCK', value: 'lck'}
             ],
-            selected: 'all',
+            week: 1,
             weeks: [
                 {text: 1, value: 1},
                 {text: 2, value: 2},
@@ -74,7 +75,6 @@ export default {
                 {text: 9, value: 9},
                 {text: 10, value: 10}
             ],
-            picked: '1'
         };
     },
 
