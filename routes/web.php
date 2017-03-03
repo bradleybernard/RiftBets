@@ -42,3 +42,4 @@ Route::get('/leaderboard', function () {
 Route::get('stats', 'Scrape\StatsController@scrape');
 Route::get('/betsTest', 'Schedule\GradingController@bets');
 Route::get('/test', 'TestBroadcastController@test');
+Route::get('/streams', 'Scrape\StreamsController@scrape');

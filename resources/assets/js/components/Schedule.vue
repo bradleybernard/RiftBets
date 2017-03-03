@@ -24,7 +24,9 @@
                             <img :src="match.resources.one.logo_url" style="max-width: 70%;"></img>
                         </div>
                         <div class="col-md-3" style="padding-top: 1em">
+                            <a :href="matchLink(match.api_id_long)">
                             <span style="">{{ match.name }}</span>
+                            </a>
                         </div>
                         <div class="col-md-2">
                             <img :src="match.resources.two.logo_url" style="max-width: 70%"></img>
@@ -60,6 +62,10 @@ export default {
         };
     },
 
+    computed: {
+
+    },
+
     methods: {
         getSchedule: function() {
             this.stats = this.$http.get('http://riftbets.dev/api/schedule?league=')
@@ -70,6 +76,9 @@ export default {
                 console.log(error);
             });
         },
+        matchLink: function(matchId) {
+            return 'match/' + matchId;
+        }
     },
 }
 </script>
