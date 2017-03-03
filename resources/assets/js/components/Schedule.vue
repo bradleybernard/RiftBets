@@ -1,56 +1,46 @@
 <template>
-
-<div>
-    <select v-model="selected" selected="all">
-    <option v-for="league in leagues" v-bind:value="league.value">
-    {{ league.text }}
-    </option>
-    </select>
-    <span>Selected: {{ selected }}</span>
-    
-    <br>
-
-    <span>Week: </span>
-    <div style="display: inline;">
-        <label v-for="week in weeks"> 
-            <div style="padding-left: 1em;">
-            <input type="radio" v-model="picked" v-bind:value="week.value"> 
-            {{ week.text }}
+    <div class="schedule">
+        <div class="row">
+            <div class="col-lg-12">
+                <select v-model="selected" selected="all">
+                    <option v-for="league in leagues" v-bind:value="league.value">
+                        {{ league.text }}
+                    </option>
+                </select>
+                <span>Selected: {{ selected }}</span>
+                <span>Week: </span>
+                
+                <label v-for="week in weeks"> 
+                    <input type="radio" v-model="picked" v-bind:value="week.value"> 
+                    {{ week.text }}
+                </label>
             </div>
-            
-        </label>
-    </div>
+        </div>
 
-    <div v-if="fetched == true">
-        <div v-for="(item, key) in stats">
-            <h1>
-            <!-- string.charAt(0).toUpperCase() + string.slice(1); -->
-            {{ key }}: {{ item[0].block_prefix.charAt(0).toUpperCase() + item[0].block_prefix.slice(1) }} {{ item[0].block_label }} {{ item[0].sub_block_prefix }} {{ item[0].sub_block_label }}
-            </h1>
-            <div v-for="match in item" v-if="match.league_id == selected || selected == 'all'" style="color: white; padding-top: 1em">
-                <div style="width:81.5em; height:11em; border:1px solid #000;  vertical-align: middle;">
-                    <h1 class="row" style="padding-left: 1em; display: inline-block;">
-                        <div class="col-md-1" style="padding-top: 1em">
-                            <span class="label label-default">{{ match.scheduled_time.substring(10,16) }}</span>
-                        </div>
-                        <div class="col-md-2 col-md-offset-2">
-                            <img :src="match.resources.one.logo_url" style="max-width: 70%;"></img>
-                        </div>
-                        <div class="col-md-3" style="padding-top: 1em">
-                            <a :href="matchLink(match.api_id_long)">
-                            <span style="">{{ match.name }}</span>
-                            </a>
-                        </div>
-                        <div class="col-md-2">
-                            <img :src="match.resources.two.logo_url" style="max-width: 70%"></img>
-                        </div>
+        <div class="date-group" v-if="fetched == true" v-for="(item, key) in stats">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>
+                        {{ key }}: {{ item[0].block_prefix.charAt(0).toUpperCase() + item[0].block_prefix.slice(1) }} {{ item[0].block_label }} {{ item[0].sub_block_prefix }} {{ item[0].sub_block_label }}
                     </h1>
                 </div>
             </div>
-            <hr>
+            <div class="row" v-if="match.league_id == selected || selected == 'all'"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
+                <div class="col-md-2">
+                    <span class="label label-default">{{ match.scheduled_time.substring(10,16) }}</span>
+                </div>
+                <div class="col-md-3">
+                    <img :src="match.resources.one.logo_url" style="width: 75px; height: 75px;"></img>
+                </div>
+                <div class="col-md-4">
+                    <a :href="matchLink(match.api_id_long)">{{ match.name }}</a>
+                </div>
+                <div class="col-md-3">
+                    <img :src="match.resources.two.logo_url" style="width: 75px; height: 75px;"></img>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -73,16 +63,16 @@ export default {
             ],
             selected: 'all',
             weeks: [
-                {text: '1', value: '1'},
-                {text: '2', value: '2'},
-                {text: '3', value: '3'},
-                {text: '4', value: '4'},
-                {text: '5', value: '5'},
-                {text: '6', value: '6'},
-                {text: '7', value: '7'},
-                {text: '8', value: '8'},
-                {text: '9', value: '9'},
-                {text: '10', value: '10'}
+                {text: 1, value: 1},
+                {text: 2, value: 2},
+                {text: 3, value: 3},
+                {text: 4, value: 4},
+                {text: 5, value: 5},
+                {text: 6, value: 6},
+                {text: 7, value: 7},
+                {text: 8, value: 8},
+                {text: 9, value: 9},
+                {text: 10, value: 10}
             ],
             picked: '1'
         };

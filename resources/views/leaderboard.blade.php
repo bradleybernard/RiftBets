@@ -2,8 +2,6 @@
 
 @section('content')
 <div class="container">
-    <div class="row">
-        Leaderboard Page
-    </div>
+    {{-- vue component here --}}
 </div>
 @endsection

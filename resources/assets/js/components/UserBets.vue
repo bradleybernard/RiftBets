@@ -1,7 +1,9 @@
 <template>
-    <div class="col-lg-12">
-        <div class="alert">
-            <p>Test</p>
+    <div class="user-bets">
+        <div class="col-lg-12">
+            <div class="alert">
+                <p>Test</p>
+            </div>
         </div>
     </div>
 </template>

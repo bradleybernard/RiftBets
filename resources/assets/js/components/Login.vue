@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="login">
         <div class="row">
             <div class="col-xs-12">
                 <div v-if="!shared.user.loggedIn" class="btn btn-success btn-block"  @click="login">Login with Facebook</div>
