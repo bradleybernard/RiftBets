@@ -1,31 +1,15 @@
 <template>
-    <div class="col-lg-12">
-        <div class="alert">
-            <div v-if="fetched == true">
-                <div style="width:81.5em; height:11em; border:1px solid #000;  vertical-align: middle;">
-                    <h3 class="row" style="display: inline-block; font-size: 32pt;">
-                        <div class="col-md-2">
-                            <img :src="matchData.resources.one.logo_url" style="max-width: 70%;"></img>
-                        </div>
-                        <div class="col-md-3" style="padding-top: .5em">
-                            <span style="">{{ matchData.name }}</span>
-                            <br>
-                            <span style="padding-left: .5em;">{{ matchData.score_one }}-{{ matchData.score_two }}</span>
-                        </div>
-                        <div class="col-md-2">
-                            <img :src="matchData.resources.two.logo_url" style="max-width: 70%"></img>
-                        </div>
-                        <div class="col-md-5" style="padding-top: 1em">
-                            <span>{{ matchData.league[0].name }}</span>
-                            <br>
-                            <span style="padding-left: .5em;">{{ matchData.league[0].scheduled_time.substring(10,16) }}</span>
-                        </div>
-                    </h3>
-                </div>
-            </div>
+    <div class="row" style="font-size: 25px; line-height: 75px;" v-if="fetched == true">
+        <div class="col-xs-4 ">
+            <img :src="matchData.resources.one.logo_url" style="width: 75px; height: 75px">
         </div>
-
-
+        <div class="col-xs-4">
+                <span class="hidden-xs">{{ matchData.name }}</span>
+                {{ matchData.score_one }} - {{ matchData.score_two }}
+        </div>
+        <div class="col-xs-4">
+            <img :src="matchData.resources.two.logo_url" style="width: 75px; height: 75px">
+        </div>
     </div>
 </template>
 

@@ -1,26 +1,24 @@
 <template>
         <div class="row">
-    	<div class="col-md-8">
-    	<!-- change channels to dynamic when done scraping from lolesports -->
-			<iframe
-			    src="http://player.twitch.tv/?channel=lolesportslas" 
-			    height="480" 
-			    width="	720" 
-			    frameborder="0" 
-			    scrolling="no"
-			    allowfullscreen="true"
-			    style="max-width: 80em;">
-			</iframe>
-		</div>
-		<div class="col-md-4">
-			<iframe frameborder="0" 
-		        scrolling="no" 
-		        id="chat_embed" 
-		        src="http://www.twitch.tv/lolesportslas/chat" 
-		        height="480" 
-		        width="300">
-			</iframe>
-		</div>
+        	<div class="col-md-12 col-lg-8">
+                <div class="embed-responsive embed-responsive-16by9">
+        			<iframe
+        			    src="http://player.twitch.tv/?channel=lolesportslas" 
+                        class="embed-responsive-item"
+        			    frameborder="0" 
+        			    scrolling="no"
+        			    allowfullscreen="true">
+        			</iframe>
+                </div>
+    		</div>
+    		<div class="hidden-md hidden-sm hidden-xs col-md-4 col-lg-4">
+        			<iframe frameborder="0" 
+        		        scrolling="no" 
+        		        id="chat_embed" 
+                        height="500"
+        		        src="http://www.twitch.tv/lolesportslas/chat">
+        			</iframe>
+    		</div>
 	</div>
 </template>
 
