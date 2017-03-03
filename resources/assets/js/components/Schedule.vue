@@ -7,6 +7,19 @@
     </option>
     </select>
     <span>Selected: {{ selected }}</span>
+    
+    <br>
+
+    <span>Week: </span>
+    <div style="display: inline;">
+        <label v-for="week in weeks"> 
+            <div style="padding-left: 1em;">
+            <input type="radio" v-model="picked" v-bind:value="week.value"> 
+            {{ week.text }}
+            </div>
+            
+        </label>
+    </div>
 
     <div v-if="fetched == true">
         <div v-for="(item, key) in stats">
@@ -58,7 +71,20 @@ export default {
                 {text: 'EU-LCS', value: 'eu-lcs'},
                 {text: 'LCK', value: 'lck'}
             ],
-            selected: 'all'
+            selected: 'all',
+            weeks: [
+                {text: '1', value: '1'},
+                {text: '2', value: '2'},
+                {text: '3', value: '3'},
+                {text: '4', value: '4'},
+                {text: '5', value: '5'},
+                {text: '6', value: '6'},
+                {text: '7', value: '7'},
+                {text: '8', value: '8'},
+                {text: '9', value: '9'},
+                {text: '10', value: '10'}
+            ],
+            picked: '1'
         };
     },
 
