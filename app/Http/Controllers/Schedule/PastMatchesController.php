@@ -26,18 +26,43 @@ class PastMatchesController extends Controller
     {
     	//
         $teamID = $request['teamID'];
+        $resID = $request['resID'];
 
-        // Initialize validator class
-        // Checks if match id is in DB
-        $validator = Validator::make($request->all(), [
-            'teamID' => 'exists:teams,api_id'
-        ]);
+        if ($teamID) {
+            // Initialize validator class
+            $validator = Validator::make($request->all(), [
+                'teamID' => 'exists:teams,api_id'
+            ]);
 
-        if ($validator->fails()) {
-            throw new \Dingo\Api\Exception\ResourceException('Invalid match id.', $validator->errors());
+            if ($validator->fails()) {
+                throw new \Dingo\Api\Exception\ResourceException('Invalid match id.', $validator->errors());
+            }
+
+            return $this->do_work($teamID);
+        }
+        else {
+            // Initialize validator class
+            $validator = Validator::make($request->all(), [
+                'resID' => 'exists:rosters,api_id_long'
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Dingo\Api\Exception\ResourceException('Invalid match id.', $validator->errors());
+            }
+
+            $teamID = DB::table('rosters')
+            ->select('api_team_id')
+            ->where('api_id_long', $resID)
+            ->get();
+            $teamID = $teamID[0]->api_team_id;
+
+            return$this->do_work($teamID);
         }
 
+    }
 
+    protected function do_work($teamID)
+    {
         // These are the matches where the interesting team was team one
         $team_one = DB::table('teams as t1')            
             ->join('rosters as r1', 't1.api_id', '=', 'r1.api_team_id')
@@ -49,7 +74,7 @@ class PastMatchesController extends Controller
                 r1.name as team_one, t1.logo_url as team_one_logo,
                 r2.name as team_two, t2.logo_url as team_two_logo,
                 matches.score_one, matches.score_two, 
-                (matches.score_one > matches.score_two) as WON, matches.api_id_long, schedule.scheduled_time
+                (matches.score_one > matches.score_two) as won, matches.api_id_long, schedule.scheduled_time
                 '))
             ->where('t1.api_id', $teamID)
             ->whereNotNull('matches.score_one');
@@ -65,7 +90,7 @@ class PastMatchesController extends Controller
                 r1.name as team_one, t1.logo_url as team_one_logo,
                 r2.name as team_two, t2.logo_url as team_two_logo,
                 matches.score_one, matches.score_two, 
-                (matches.score_one < matches.score_two) as WON, matches.api_id_long, schedule.scheduled_time
+                (matches.score_one < matches.score_two) as won, matches.api_id_long, schedule.scheduled_time
                 '))
             ->where('t2.api_id', $teamID)
             ->whereNotNull('matches.score_one');
@@ -87,7 +112,7 @@ class PastMatchesController extends Controller
             //   +"scheduled_time": "2017-02-19 20:00:00"
             // }
 
-    	$all_matches = $all_matches->sortByDesc('scheduled_time');
+        $all_matches = $all_matches->sortByDesc('scheduled_time')->values();
         $all_matches = $all_matches->slice(0, 5);  
 
         foreach ($all_matches as $match) {
@@ -115,8 +140,9 @@ class PastMatchesController extends Controller
             $match->score_two = $team_two_wins[0]->sum;
 
         }
-        
-        return $this->response->array($all_matches);
-
+        // dd($all_matches);
+        return $this->response->array($all_matches->toArray());
     }
+
+
 }
