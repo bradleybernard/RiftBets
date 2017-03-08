@@ -14,19 +14,13 @@
                         {{ _week.text }}
                     </option>
                 </select>
-<!--                 <label v-for="_week in weeks"> 
-                    <input type="radio" v-model="week" v-bind:value="_week.value"> 
-                    {{ _week.text }}
-                </label> -->
             </div>
         </div>
 
-        <div class="date-group" v-if="fetched == true" v-for="(item, key) in stats">
+        <div class="date-group" v-if="fetched == true && checkEmpty(item) == false" v-for="(item, key) in stats">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>
-                        {{ key }}<!-- : {{ item[0].block_prefix.charAt(0).toUpperCase() + item[0].block_prefix.slice(1) }} {{ item[0].block_label }} {{ item[0].sub_block_prefix }} {{ item[0].sub_block_label }} -->
-                    </h1>
+                    <h1>{{ key }}</h1>
                 </div>
             </div>
             <div class="row" v-if="Number(match.block_label) == week && (match.league_id == league || league == 'all')"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
@@ -96,8 +90,18 @@ export default {
                 console.log(error);
             });
         },
+        
         matchLink: function(matchId) {
             return 'match/' + matchId;
+        },
+
+        checkEmpty: function(matchGroup) {
+            for (var i = 0; i < matchGroup.length; i++) {
+                if(Number(matchGroup[i].block_label) == this.week && (matchGroup[i].league_id == this.league || this.league == 'all')) {
+                    return false;
+                }
+            }
+            return true;
         }
     },
 }
