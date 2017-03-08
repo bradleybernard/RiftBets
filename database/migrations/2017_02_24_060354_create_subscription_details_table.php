@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSubscribedUsersTable extends Migration
+class CreateSubscriptionDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateSubscribedUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscriptions', function (Blueprint $table) {
+        Schema::create('subscription_details', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
-            $table->string('api_match_id');
-            $table->boolean('is_bet')->default(false);
-            $table->boolean('sent_start')->default(false);
+            $table->integer('subscription_id');
+            $table->string('api_game_id');
+            $table->string('name');
             $table->boolean('sent_end')->default(false);
-            $table->boolean('is_active')->default(true);
             $table->timestamp('created_at');
         });
     }
@@ -32,6 +30,6 @@ class CreateSubscribedUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::dropIfExists('subscription_details');
     }
 }

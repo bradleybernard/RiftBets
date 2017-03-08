@@ -2,29 +2,28 @@
     <div class="schedule">
         <div class="row">
             <div class="col-lg-12">
+                <span>League: </span>
                 <select v-model="league" selected="all">
                     <option v-for="_league in leagues" v-bind:value="_league.value">
                         {{ _league.text }}
                     </option>
                 </select>
                 <span>Week: </span>
-                
-                <label v-for="_week in weeks"> 
-                    <input type="radio" v-model="week" v-bind:value="_week.value"> 
-                    {{ _week.text }}
-                </label>
+                <select v-model="week" selected="1">
+                    <option v-for="_week in weeks" v-bind:value="_week.value">
+                        {{ _week.text }}
+                    </option>
+                </select>
             </div>
         </div>
 
-        <div class="date-group" v-if="fetched == true" v-for="(item, key) in stats">
+        <div class="date-group" v-if="fetched == true && checkEmpty(item) == false" v-for="(item, key) in stats">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>
-                        {{ key }}: {{ item[0].block_prefix.charAt(0).toUpperCase() + item[0].block_prefix.slice(1) }} {{ item[0].block_label }} {{ item[0].sub_block_prefix }} {{ item[0].sub_block_label }}
-                    </h1>
+                    <h1>{{ key }}</h1>
                 </div>
             </div>
-            <div class="row" v-if="match.league_id == league || league == 'all'"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
+            <div class="row" v-if="Number(match.block_label) == week && (match.league_id == league || league == 'all')"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
                 <div class="col-md-2">
                     <span class="label label-default">{{ match.scheduled_time.substring(10,16) }}</span>
                 </div>
@@ -91,8 +90,18 @@ export default {
                 console.log(error);
             });
         },
+        
         matchLink: function(matchId) {
             return 'match/' + matchId;
+        },
+
+        checkEmpty: function(matchGroup) {
+            for (var i = 0; i < matchGroup.length; i++) {
+                if(Number(matchGroup[i].block_label) == this.week && (matchGroup[i].league_id == this.league || this.league == 'all')) {
+                    return false;
+                }
+            }
+            return true;
         }
     },
 }
