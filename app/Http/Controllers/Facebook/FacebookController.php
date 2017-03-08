@@ -15,6 +15,28 @@ use Redis;
 class FacebookController extends Controller
 {
     // Login/register a user by Facebook
+    public function test(Request $request)
+    {
+        $fb = app(\SammyK\LaravelFacebookSdk\LaravelFacebookSdk::class);
+        $accessToken = $request['facebook_access_token'];
+
+        try {
+            $response = $fb->get('/10205501183088836/friends', $accessToken);
+        } catch(\Facebook\Exceptions\FacebookSDKException $e) {
+            Log::error($e->getMessage());
+            dd($e->getMessage());
+        }
+
+        //dd($response);
+
+        $userNode = $response->getGraphEdge();
+        // $userNode = $response->getItems();
+
+        dd($userNode);
+
+    }
+
+    // Login/register a user by Facebook
     public function facebook(Request $request)
     {
     	$fb = app(\SammyK\LaravelFacebookSdk\LaravelFacebookSdk::class);
@@ -27,7 +49,11 @@ class FacebookController extends Controller
   			dd($e->getMessage());
 		}
 
+        // dd($response);
+
 		$userNode = $response->getGraphUser();
+
+        // dd($userNode);
 
         if(!$user = User::where('facebook_id', $userNode->getId())->first()) {
             $user = User::create([
