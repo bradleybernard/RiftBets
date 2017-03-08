@@ -16,6 +16,7 @@ $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', ['middleware' => 'jwt'], function ($api) 
 {
     $api->post('auth/facebook', 'App\Http\Controllers\Facebook\FacebookController@facebook');
+    $api->post('auth/test', 'App\Http\Controllers\Facebook\FacebookController@test');
 
     $api->get('schedule', 'App\Http\Controllers\Queries\ScheduleController@query');
     $api->get('match', 'App\Http\Controllers\Queries\MatchDetailsController@query');
