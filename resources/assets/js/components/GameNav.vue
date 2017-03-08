@@ -1,4 +1,5 @@
 <template>
+<div>
     <div class="game-nav">
         <div class="row" v-if="fetched == true" style="font-size: 25px; line-height: 75px;" >
             <div class="col-xs-4 ">
@@ -13,6 +14,37 @@
             </div>
         </div>
     </div>
+    <div class="game-display" style="padding-top: 1em;">
+        <div class="row">
+            <div class="col-md-12 col-lg-8">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe v-if="matchData.hasOwnProperty('game_one')"
+                        :src="matchData.game_one.videos[0].source" 
+                        class="embed-responsive-item"
+                        frameborder="0" 
+                        scrolling="no"
+                        allowfullscreen="true">
+                    </iframe>
+                    <iframe v-else
+                        src="http://player.twitch.tv/?channel=lolesportslas" 
+                        class="embed-responsive-item"
+                        frameborder="0" 
+                        scrolling="no"
+                        allowfullscreen="true">
+                    </iframe>
+                </div>
+            </div>
+            <div class="hidden-md hidden-sm hidden-xs col-md-4 col-lg-4">
+                <iframe frameborder="0" 
+                    scrolling="no" 
+                    id="chat_embed" 
+                    height="500"
+                    src="http://www.twitch.tv/lolesportslas/chat">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</div>
 </template>
 
 <script>
