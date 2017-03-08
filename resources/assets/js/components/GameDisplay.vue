@@ -18,7 +18,13 @@
             <div class="row">
                 <div class="col-md-12 col-lg-8 text-center">
                     <div class="btn-group" role="toolbar">
-                        <button v-for="gameNum in bestOf" type="button" @click="changeGame(gameNum)" v-bind:class="[currentGame.number == gameNum ? 'active' : '']" class="btn btn-default">Game {{ gameNum }}</button>
+                        <button 
+                            v-for="gameNum in bestOf" 
+                            type="button" 
+                            @click="changeGame(gameNum)" 
+                            v-bind:class="[currentGame.number == gameNum ? 'active' : '']" 
+                            class="btn btn-default"
+                        >Game {{ gameNum }}</button>
                     </div>
                 </div>
             </div>
@@ -58,8 +64,9 @@
         <div class="game-bets" v-if="betFetched == true">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="well">
-                        <h4>Bets</h4>
+                    <h4>Bets</h4>
+                    <div class="well" v-for="bet in betData">
+                        {{ bet.description }}
                     </div>
                 </div>
             </div>
@@ -114,6 +121,8 @@ export default {
         },
 
         changeGame: function (gameNum) {
+
+            this.betFetched = false;
             gameNum = (gameNum == 0 ? 1 : gameNum);
 
             var gameKey = "G" + gameNum;
