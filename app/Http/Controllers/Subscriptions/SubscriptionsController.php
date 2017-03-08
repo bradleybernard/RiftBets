@@ -48,11 +48,25 @@ class SubscriptionsController extends Controller
     	 		->update(['is_active' => $request->input('status')]);
         } else {
         	if($request->input('status')) {
-        		DB::table('subscriptions')->insert([
+        		$subId = DB::table('subscriptions')->insertGetId([
     				'user_id'		=> $this->auth->user()->id,
     				'api_match_id'	=> $request->input('match_id'),
     				'is_active'		=> true
     			]);
+
+                $games = DB::table('games')->select('api_id_long', 'name')
+                            ->where('api_match_id', $request->input('match_id'))
+                            ->get();
+
+                foreach($games as $game)
+                {
+                    DB::table('subscription_details')->insert([
+                        'subscription_id'   => $subId,
+                        'api_game_id'       => $game->api_id_long,
+                        'name'              => $game->name
+                    ]);
+                }
+
         	} else {
         		throw new \Dingo\Api\Exception\ResourceException('No subscription to remove.', $validator->errors());
         	}
@@ -64,8 +78,6 @@ class SubscriptionsController extends Controller
         	'match_id' 	=> $subscription->api_match_id,
         	'is_susbscribed'	=> $subscription->is_active
         ];
-
-        dispatch(new SendMail);
 
         return $this->response->array($response);
     }

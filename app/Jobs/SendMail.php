@@ -12,6 +12,7 @@ use DB;
 use Mail;
 use App\Mail\MatchStartMail;
 use App\Mail\MatchEndMail;
+use App\Mail\GameEndedMail;
 use \Carbon\Carbon;
 
 class SendMail implements ShouldQueue
@@ -68,6 +69,7 @@ class SendMail implements ShouldQueue
                     DB::table('subscriptions')
                         ->where('id', $sub->id)
                         ->update(['sent_start'  => true]);
+                        
                 }
             }
             elseif(!$sub->sent_end) //Already sent 'Match Starting' mail and "Match Ended" not sent
@@ -82,6 +84,40 @@ class SendMail implements ShouldQueue
                             ->update([
                                 'sent_end'  => true,
                                 'is_active' => false]);
+
+                    DB::table('subscription_details')
+                        ->where('subscription_id', $sub->id)
+                        ->update(['sent_end' => true]);
+                } else {
+                    $subGames = DB::table('subscription_details')
+                                    ->where('subscription_id', $sub->id)
+                                    ->orderBy('name')
+                                    ->get();
+
+                    foreach ($subGames as $subGame) {
+                        if(!$subGame->sent_end)
+                        {
+                            $game = DB::table('games')->select('game_id')
+                                        ->where('api_id_long', $subGame->api_game_id)
+                                        ->get()
+                                        ->first();
+                            //dd($subGame);
+
+                            if($game->game_id != null)
+                            {
+                                //SEND GAME ENDED MAIL
+                                Mail::to($user)
+                                    ->queue(new GameEndedMail($user->name, $teamOne->name, $teamTwo->name, $subGame->name));
+
+                                DB::table('subscription_details')
+                                    ->where('id', $subGame->id)
+                                    ->update(['sent_end' => true]);
+
+                                break;
+
+                            }
+                        }
+                    }
                 }
             }
         }
