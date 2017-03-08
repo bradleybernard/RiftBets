@@ -11,6 +11,7 @@ use \GuzzleHttp\Exception\ServerException;
 use App\Game;
 use App\Jobs\InsertGameQuestionAnswers;
 use App\Jobs\PushNotificationsForMatches;
+use App\Jobs\SendMail;
 use App\Events\GameCompleted;
 
 use DB;
@@ -117,6 +118,8 @@ class PollingController extends ScrapeController
                 $this->queueGamesAnswers($games);
             }
         }
+
+        dispatch(new SendMail);
     }
 
     // When a new game is complete update the existing match and game rows
