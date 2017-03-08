@@ -7,7 +7,6 @@
                         {{ _league.text }}
                     </option>
                 </select>
-                <span>Selected: {{ league }}</span>
                 <span>Week: </span>
                 
                 <label v-for="_week in weeks"> 

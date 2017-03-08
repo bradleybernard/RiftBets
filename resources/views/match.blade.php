@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="container">
-    <game-nav match="{{ $matchId }}"></game-nav>
-    <game-display></game-display>
+    <game-display match="{{ $matchId }}"></game-display>
 </div>
 @endsection
