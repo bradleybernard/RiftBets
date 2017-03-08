@@ -38,6 +38,8 @@ Route::get('/leaderboard', function () {
     return view('leaderboard');
 });
 
+Route::get('/clear', 'Bets\BetsController@clear');
+
 //Delete soon plz
 Route::get('stats', 'Scrape\StatsController@scrape');
 Route::get('/betsTest', 'Schedule\GradingController@bets');

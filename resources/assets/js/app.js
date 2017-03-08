@@ -17,7 +17,7 @@ Vue.component('example', require('./components/Example.vue'));
 Vue.component('login', require('./components/Login.vue'));
 Vue.component('navbar', require('./components/Navbar.vue'));
 Vue.component('game-schedule', require('./components/Schedule.vue'));
-Vue.component('user-bets', require('./components/UserBets.vue'));
+Vue.component('game-bets', require('./components/GameBets.vue'));
 Vue.component('game-display', require('./components/GameDisplay.vue'));
 
 const app = new Vue({

@@ -14,9 +14,45 @@ class BetsController extends Controller
 {
 	protected $games;
 
+	public function clear(Request $request) {
+		
+		// GAME_ID
+		$gameId = $request->get('game_id');
+
+		$game = DB::table('games')->where('game_id', $gameId)->first();
+
+		if(!$game) {
+			return 'Game does not exist.';
+		}
+
+		DB::delete('DELETE game_events, game_event_details FROM game_events INNER JOIN game_event_details ON game_events.unique_id = game_event_details.event_unique_id');
+		DB::table('game_frame_player_stats')->where('game_id', $gameId)->delete();
+		DB::table('game_mappings')->where('game_id', $gameId)->delete();
+		DB::table('game_player_stats')->where('game_id', $gameId)->delete();
+		DB::table('game_stats')->where('game_id', $gameId)->delete();
+		DB::table('game_team_stats')->where('game_id', $gameId)->delete();
+		DB::table('game_videos')->where('api_game_id', $game->api_id_long)->delete();
+		DB::table('question_answers')->where('game_id', $gameId)->delete();
+
+		DB::table('games')->where('game_id', $gameId)->update([
+			'game_id' 		=> NULL,
+			'game_realm' 	=> NULL,
+			'platform_id' 	=> NULL,
+		]);
+
+		DB::table('matches')->where('api_id_long', $game->api_match_id)->update([
+			'state' 	=> 'unresolved',
+			'score_one' => NULL,
+			'score_two' => NULL,
+		]);
+
+		return 'Game cleared.';
+	}
+
 	public function bet(Request $request)
 	{
 		$request->merge(['user_credits' => $this->auth->user()->credits]);
+		$debug = $request->get('debug');
 
 		//retrieve if player has already input a bet on the game id specified
 		$previousBet = DB::table('bets')
@@ -96,7 +132,8 @@ class BetsController extends Controller
 
 		if($matchState->state == 'resolved')
 		{
-			throw new \Dingo\Api\Exception\ResourceException('Match has already resolved.', $validator->errors());
+			if(!$debug)
+				throw new \Dingo\Api\Exception\ResourceException('Match has already resolved.', $validator->errors());
 		}
 
 		$gameStart = DB::table('schedule')->select('scheduled_time')
@@ -120,8 +157,9 @@ class BetsController extends Controller
 
 			$difference = $mytime->gt($gameStart);
 
-			if ($difference){
-				throw new \Dingo\Api\Exception\ResourceException('Invalid bet interval', $validator->errors());
+			if ($difference) {
+				if(!$debug)
+					throw new \Dingo\Api\Exception\ResourceException('Invalid bet interval', $validator->errors());
 			}
 		} else
 		{
@@ -141,8 +179,9 @@ class BetsController extends Controller
 
 			$difference = $mytime->gt($nextGame);
 
-			if($difference){
-				throw new \Dingo\Api\Exception\ResourceException('Invalid bet interval', $validator->errors());
+			if($difference) {
+				if(!$debug)
+					throw new \Dingo\Api\Exception\ResourceException('Invalid bet interval', $validator->errors());
 			}
 		}
 
@@ -152,7 +191,9 @@ class BetsController extends Controller
 			'user_id'			=> $this->auth->user()->id,
 			'credits_placed'	=> $request['credits_placed'],
 			'api_game_id'		=> $request['bets'][0]['api_game_id'],
-			'details_placed'	=> count($request['bets'])
+			'details_placed'	=> count($request['bets']),
+			'updated_at'		=> \Carbon\Carbon::now(),
+			'created_at'		=> \Carbon\Carbon::now(),
 		]);
 
 
@@ -174,6 +215,8 @@ class BetsController extends Controller
 			$details[$i]['bet_id'] = $betId;
 			$details[$i]['user_answer'] = $request['bets'][$i]['user_answer'];
 			$details[$i]['credits_placed'] = $request['bets'][$i]['credits_placed'];
+			$details[$i]['updated_at'] = \Carbon\Carbon::now();
+			$details[$i]['created_at'] = \Carbon\Carbon::now();
 		}
 
 		DB::table('bet_details')->insert($details);
@@ -220,7 +263,11 @@ class BetsController extends Controller
 					->join('questions', 'questions.id', '=', 'bet_details.question_id')
 					->join('question_answers', 'question_answers.id', '=', 'bet_details.answer_id')
 					->get();
-		// dd($bets);
+
+		if($bets->count() == 0) {
+			return $this->response->array([]);
+		}
+
 		$summoners = [];
 		$items = [];
 		$champions = [];
@@ -365,6 +412,10 @@ class BetsController extends Controller
 					->join('questions', 'questions.id', '=', 'bet_details.question_id')
 					->leftJoin('question_answers', 'question_answers.id', '=', 'bet_details.answer_id')
 					->get();
+
+		if($bets->count() == 0) {
+			return $this->response->array([]);
+		}
 
 		$match = DB::table('matches')
 					->join('games', 'games.api_match_id', '=', 'matches.api_id_long')
@@ -552,7 +603,7 @@ class BetsController extends Controller
 		}
 		// dd($bets);
 
-		return $bets;
+		return $this->response->array($bets);
 	}
 
 	 /************************************************

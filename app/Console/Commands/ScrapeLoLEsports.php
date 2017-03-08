@@ -38,7 +38,7 @@ class ScrapeLoLEsports extends Command
      */
     public function handle()
     {
-        $controllers = ['Leagues', 'MatchDetails', 'GameStats', 'Timeline', 'Players', 'Schedule'];
+        $controllers = ['Leagues', 'MatchDetails', 'GameStats', 'Timeline', 'Players', 'Schedule', 'Stats'];
 
         foreach($controllers as $controller) {
             app()->make('App\Http\Controllers\Scrape\\' . $controller . 'Controller')->scrape();
