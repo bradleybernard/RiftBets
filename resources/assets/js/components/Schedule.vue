@@ -1,7 +1,7 @@
 <template>
     <div class="schedule">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-12 col-xs-12">
                 <span>League: </span>
                 <select v-model="league" selected="all">
                     <option v-for="_league in leagues" v-bind:value="_league.value">
@@ -24,16 +24,16 @@
                 </div>
             </div>
             <div class="row" v-if="Number(match.block_label) == week && (match.league_id == league || league == 'all')"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
-                <div class="col-md-2">
+                <div class="col-md-2 col-xs-12">
                     <span class="label label-default">{{ match.scheduled_time.substring(10,16) }}</span>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 col-xs-2">
                     <img :src="match.resources.one.logo_url" style="width: 75px; height: 75px;"></img>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 col-xs-6 col-xs-offset-2 col-md-offset-0">
                     <a :href="matchLink(match.api_id_long)">{{ match.name }}</a>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 col-xs-2">
                     <img :src="match.resources.two.logo_url" style="width: 75px; height: 75px;"></img>
                 </div>
             </div>
