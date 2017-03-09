@@ -29,8 +29,10 @@ class FacebookController extends Controller
 
         //dd($response);
 
-        $userNode = $response->getGraphEdge();
-        // $userNode = $response->getItems();
+        $response = $response->getGraphEdge();
+        //dd($response);
+
+        $userNode = $response->getGraphItems();
 
         dd($userNode);
 
