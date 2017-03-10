@@ -15,26 +15,45 @@ use Redis;
 class FacebookController extends Controller
 {
     // Login/register a user by Facebook
-    public function test(Request $request)
+    public function add_friends(Request $request)
     {
         $fb = app(\SammyK\LaravelFacebookSdk\LaravelFacebookSdk::class);
         $accessToken = $request['facebook_access_token'];
 
         try {
-            $response = $fb->get('/10205501183088836/friends', $accessToken);
+            $user = $fb->get('/me?fields=id,name,email', $accessToken);
+            $friends = $fb->get('/me/friends?fields=id,name,email', $accessToken);
         } catch(\Facebook\Exceptions\FacebookSDKException $e) {
             Log::error($e->getMessage());
             dd($e->getMessage());
         }
 
-        //dd($response);
+        $userNode = $user->getGraphUser();
+        $userID = $userNode->getId();
 
-        $response = $response->getGraphEdge();
-        //dd($response);
+        $friends = $friends->getGraphEdge();
 
-        $userNode = $response->getGraphItems();
+        foreach ($friends as $graphNode) {
+            $friendID = $graphNode->asArray()['id'];
+            $test1 = DB::table('friends')
+                ->select('id')
+                ->where('friend_one', '=', $userID)
+                ->where('friend_two', '=', $friendID);
 
-        dd($userNode);
+            $test = DB::table('friends')
+                ->select('id')
+                ->where('friend_one', '=', $friendID)
+                ->where('friend_two', '=', $userID)
+                ->union($test1)
+                ->get();
+
+            if($test->isEmpty())
+                DB::table('friends')->insert([
+                    'friend_one'    => $userID,
+                    'friend_two'    => $friendID,
+                    'created_at'    => \Carbon\Carbon::now(),
+                ]);            
+        }
 
     }
 
@@ -51,11 +70,7 @@ class FacebookController extends Controller
   			dd($e->getMessage());
 		}
 
-        // dd($response);
-
 		$userNode = $response->getGraphUser();
-
-        // dd($userNode);
 
         if(!$user = User::where('facebook_id', $userNode->getId())->first()) {
             $user = User::create([
