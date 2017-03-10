@@ -9,7 +9,7 @@
                     </option>
                 </select>
                 <span>Week: </span>
-                <select v-model="week" selected="1">
+                <select v-model="week" :selected="getDate(new Date())">
                     <option v-for="_week in weeks" v-bind:value="_week.value">
                         {{ _week.text }}
                     </option>
@@ -60,7 +60,7 @@ export default {
                 {text: 'EU-LCS', value: 'eu-lcs'},
                 {text: 'LCK', value: 'lck'}
             ],
-            week: 1,
+            week: this.getDate(new Date()),
             weeks: [
                 {text: 1, value: 1},
                 {text: 2, value: 2},
@@ -73,6 +73,7 @@ export default {
                 {text: 9, value: 9},
                 {text: 10, value: 10}
             ],
+            currentWeek: null
         };
     },
 
@@ -102,6 +103,20 @@ export default {
                 }
             }
             return true;
+        },
+
+        getDate: function(date) {
+            date = new Date(+date);
+            date.setHours(0,0,0,0);
+            // Set to nearest Thursday: current date + 4 - current day number
+            // Make Sunday's day number 7
+            date.setDate(date.getDate() + 4 - (date.getDay()||7));
+            // Get first day of year
+            var yearStart = new Date(date.getFullYear(),0,20);
+            // Calculate full weeks to nearest Thursday
+            var weekNo = Math.ceil(( ( (date - yearStart) / 86400000) + 1)/7);
+            // Return array of year and week number
+            return this.currentWeek = weekNo
         }
     },
 }
