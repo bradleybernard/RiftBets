@@ -133,9 +133,7 @@ export default {
     methods: {
         getMatchData: function(id) {
             this.$http.get('/api/match?match_id=' + id).then(response => {
-                console.log(response.data);
                 this.matchData = response.data;
-                this.matchFetched = true;
                 this.setCurrentGame(response.data);
             }).catch(function (error) {
                 console.log(error);
@@ -178,6 +176,8 @@ export default {
                 }
             }
 
+            this.matchFetched = true;
+
             if(this.shared.user.loggedIn) {
                 this.getGameBet(this.currentGame.apiGameId);
             }
@@ -216,7 +216,9 @@ export default {
         },
 
         gameVideo: function (gameNum) {
-            if(gameNum == 1) {
+            if(gameNum == 1 && this.matchData.state == 'unresolved') {
+                return null;
+            } else if(gameNum == 1) {
                 return this.matchData.game_one.videos[0].source;
             } else if(gameNum == 2) {
                 return this.matchData.game_two.videos[0].source;
