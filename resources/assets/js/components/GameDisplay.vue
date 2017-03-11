@@ -6,8 +6,8 @@
                     <div class="col-xs-4 ">
                         <img :src="matchData.resources.one.logo_url" style="width: 75px; height: 75px">
                     </div>
-                    <div class="col-xs-4">
-                        <span class="hidden-xs">{{ matchData.name }}</span>
+                    <div class="col-xs-4" style="line-height: 30px;">
+                        {{ matchData.name }} <br/>
                         {{ matchData.score_one }} - {{ matchData.score_two }}
                     </div>
                     <div class="col-xs-4">
@@ -219,15 +219,15 @@ export default {
             if(gameNum == 1 && this.matchData.state == 'unresolved') {
                 return null;
             } else if(gameNum == 1) {
-                return this.matchData.game_one.videos[0].source;
+                return (this.matchData.game_one.videos ? this.matchData.game_one.videos[0].source : null);
             } else if(gameNum == 2) {
-                return this.matchData.game_two.videos[0].source;
+                return (this.matchData.game_two.videos ? this.matchData.game_two.videos[0].source : null);
             } else if(gameNum == 3) {
-                return this.matchData.game_three.videos[0].source;
+                return (this.matchData.game_three.videos ? this.matchData.game_three.videos[0].source : null);
             } else if(gameNum == 4) {
-                return this.matchData.game_four.videos[0].source;
+                return (this.matchData.game_four.videos ? this.matchData.game_four.videos[0].source : null);
             } else if(gameNum == 5) {
-                return this.matchData.game_five.videos[0].source;
+                return (this.matchData.game_five.videos ? this.matchData.game_five.videos[0].source : null);
             }
         }
     },

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Http\Request;
 use Illuminate\Console\Command;
+use DB;
 
 class ScrapeLoLEsports extends Command
 {
@@ -38,7 +39,8 @@ class ScrapeLoLEsports extends Command
      */
     public function handle()
     {
-        $controllers = ['Leagues', 'MatchDetails', 'GameStats', 'Timeline', 'Players', 'Schedule', 'Stats'];
+
+        $controllers = ['Leagues', 'MatchDetails', 'GameStats', 'Timeline', 'Players', 'Schedule'];
 
         foreach($controllers as $controller) {
             app()->make('App\Http\Controllers\Scrape\\' . $controller . 'Controller')->scrape();
@@ -53,5 +55,21 @@ class ScrapeLoLEsports extends Command
         $this->info('Inserted answers from questions/gamestats table');
 
         $this->info('LoLEsports scrape completed successfully!');
+
+        $latestGame = DB::table('game_stats')
+                ->select('game_stats.game_version')
+                ->join('games', 'games.game_id', '=', 'game_stats.game_id')
+                ->join('schedule', 'schedule.api_match_id', '=', 'games.api_match_id')
+                ->orderBy('scheduled_time', 'DESC')
+                ->first();
+
+        $version = substr($latestGame->game_version, 0, 5);
+
+        // scrape ddragon
+        $ddragon = new \App\Http\Controllers\Scrape\DDragonController();
+        $ddragon->scrape($version);
+
+        $this->info('DDragon scrape completed successfully!'); 
+        // end ddragon
     }
 }
