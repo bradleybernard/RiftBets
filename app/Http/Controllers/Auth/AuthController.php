@@ -54,6 +54,8 @@ class AuthController extends Controller
                   ->queue(new WelcomeMail($this->pry($facebook, 'name')));
         }
 
+        app('App\Http\Controllers\Facebook\FacebookController')->add_friends($facebook->token);
+
         $token = JWTAuth::fromUser($user);
         Cookie::queue('jwt', $token, 60 * 24 * 365, '/', env('SESSION_DOMAIN'), false, false);
 

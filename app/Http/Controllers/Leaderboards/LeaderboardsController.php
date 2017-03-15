@@ -249,6 +249,78 @@ class LeaderboardsController extends Controller
         return $this->response->array($response);
     }
 
+    // Get a leaderboard by start and end
+    public function leaderboards_signedin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leaderboard'   => 'required|exists:leaderboards,stat',
+        ]);
+
+        if ($validator->fails()) {
+            throw new \Dingo\Api\Exception\ResourceException('Invalid request sent.', $validator->errors());
+        }
+
+        $board = DB::table('leaderboards')->where('stat', $request->get('leaderboard'))->first();
+        // $userIds = $this->redis->ZREVRANGE(self::PREFIX . $request->get('leaderboard'), $request->get('start'), $request->get('end'));
+        $userIds = $this->redis->ZREVRANGE(self::PREFIX . $request->get('leaderboard'), 0, -1);
+
+        $first = DB::table('friends')
+                ->join('users', 'users.facebook_id', '=', 'friends.friend_two')
+                ->select('users.id')
+                ->where('friend_one', $this->auth->user()->facebook_id);
+
+        $friends = DB::table('friends')
+                ->join('users', 'users.facebook_id', '=', 'friends.friend_one')
+                ->select('users.id')
+                ->where('friend_two', $this->auth->user()->facebook_id)
+                ->union($first)
+                ->get();
+
+        $friends = $friends->pluck('id')->toArray();
+
+        // dd($userIds);
+        // dd($friends);
+
+        $desired = array_flip($userIds);
+
+        // dd($userIds);
+
+        foreach ($userIds as $id) {
+            if (!in_array($id, $friends)) {
+                array_forget($desired, $id);
+            }
+        }
+
+        $userIds = array_flip($desired);
+
+        if($this->auth->user() && !in_array($this->auth->user()->id, $userIds)) {
+            $userIds[] = $this->auth->user()->id;
+        }
+
+        $users = DB::table('users')
+                ->select(['users.id', 'users.name', 'user_stats.' . $board->stat . ' as stat', 'users.facebook_id'])
+                ->join('user_stats', 'user_stats.user_id', '=', 'users.id')
+                ->whereIn('users.id', $userIds)
+                ->get();
+
+        $desired = array_flip($userIds);
+        $sortedUsers = $response = [];
+
+        foreach($users as $key => $user) {
+            $user->rank = $this->userRank($board->stat, $user->id);
+            $sortedUsers[$desired[$user->id]] = $user;
+            if($this->auth->user() && $user->id == $this->auth->user()->id) {
+                $response['me'] = $user;
+            }
+        }
+
+        ksort($sortedUsers);
+        $response['users'] = $sortedUsers;
+        $response['leaderboard'] = $board;
+
+        return $this->response->array($response);
+    }
+
     // Get a users rank in a leaderboard with ties
     public function userRank($board, $userId)
     {
