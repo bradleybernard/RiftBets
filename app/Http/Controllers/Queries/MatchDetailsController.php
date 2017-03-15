@@ -148,7 +148,7 @@ class MatchDetailsController extends Controller
                         ->get()
                         ->keyBy('champion_id');
 
-        $itemSlot = ['item_1', 'item_2', 'item_3', 'item_4', 'item_5', 'item_6'];
+        $itemSlot = ['item_0', 'item_1', 'item_2', 'item_3', 'item_4', 'item_5', 'item_6'];
 
         $items = collect([]);
 

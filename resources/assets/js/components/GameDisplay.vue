@@ -53,13 +53,36 @@
                         </iframe>
                     </div>
                 </div>
-                <div class="hidden-md hidden-sm hidden-xs col-md-4 col-lg-4">
-                    <iframe frameborder="0" 
+                <div class="hidden-sm hidden-xs col-md-4 col-lg-4">
+                    <iframe v-if="matchData.state !='resolved'"
+                        frameborder="0"
                         scrolling="no" 
                         id="chat_embed" 
                         height="500"
                         src="http://www.twitch.tv/lolesportslas/chat">
                     </iframe>
+                    <div v-else class="row">
+                        <div v-for="player in matchData['game_one']['team_one']['player_stats']" class="col-md-12">
+                            <div class="row">
+                                <img style="width: 30px; height: 30px;" :src="player.champion.image_url">
+                                <div class="col-md-8">
+                                {{ player.summoner_name }}
+                                {{ player.minions_killed }}
+                                {{ player.gold_earned }}<img style="width: 15px; height: 15px" src="https://files.stage.gg/statIcons/scoreboardicon_gold.png">
+                                {{ player.kills }} / {{ player.deaths }} / {{ player.assists }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <img style="width: 25px; height: 25px;" v-if="player['item_0']" :src="player['item_0']['image_url']">
+                                <img style="width: 25px; height: 25px;" v-if="player['item_1']" :src="player['item_1']['image_url']">
+                                <img style="width: 25px; height: 25px;" v-if="player['item_2']" :src="player['item_2']['image_url']">
+                                <img style="width: 25px; height: 25px;" v-if="player['item_3']" :src="player['item_3']['image_url']">
+                                <img style="width: 25px; height: 25px;" v-if="player['item_4']" :src="player['item_4']['image_url']">
+                                <img style="width: 25px; height: 25px;" v-if="player['item_5']" :src="player['item_5']['image_url']">
+                                <img style="width: 25px; height: 25px;" v-if="player['item_6']" :src="player['item_6']['image_url']">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
