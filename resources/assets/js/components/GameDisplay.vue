@@ -6,8 +6,8 @@
                     <div class="col-xs-4 ">
                         <img :src="matchData.resources.one.logo_url" style="width: 75px; height: 75px">
                     </div>
-                    <div class="col-xs-4">
-                        <span class="hidden-xs">{{ matchData.name }}</span>
+                    <div class="col-xs-4" style="line-height: 30px;">
+                        {{ matchData.name }} <br/>
                         {{ matchData.score_one }} - {{ matchData.score_two }}
                     </div>
                     <div class="col-xs-4">
@@ -20,9 +20,10 @@
                     <div class="btn-group" role="toolbar">
                         <button 
                             v-for="gameNum in bestOf" 
-                            type="button" 
+                            :class="[currentGame.number == gameNum ? 'active' : '']" 
                             @click="changeGame(gameNum)" 
-                            v-bind:class="[currentGame.number == gameNum ? 'active' : '']" 
+                            :disabled="gameNum > (matchData.score_one + matchData.score_two)"
+                            type="button" 
                             class="btn btn-default"
                         >Game {{ gameNum }}</button>
                     </div>
@@ -35,13 +36,15 @@
                 <div class="col-md-12 col-lg-8">
                     <div class="embed-responsive embed-responsive-16by9">
                         <iframe
-                            :src="matchData.game_one.videos[0].source" 
+                            v-if="matchData.state == 'resolved'"
+                            :src="currentGame.video" 
                             class="embed-responsive-item"
                             frameborder="0" 
                             scrolling="no"
                             allowfullscreen="true">
                         </iframe>
                         <iframe
+                            v-else
                             src="http://player.twitch.tv/?channel=lolesportslas" 
                             class="embed-responsive-item"
                             frameborder="0" 
@@ -62,16 +65,49 @@
         </div>
 
         <div class="game-bets" v-if="betFetched == true">
-            <div class="row">
+            <div class="row" v-if="betData.length > 0">
                 <div class="col-lg-12">
-                    <h4>Bets</h4>
-                    <div class="well" v-for="bet in betData">
-                        {{ bet.description }}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Bet Card ({{ betData[0].is_complete ? 'Complete' : 'Pending'}})</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <div class="row" style="margin-bottom: 20px;">
+                                <div class="col-lg-12">
+                                    <div class="col-md-6"> 
+                                        Question
+                                    </div>
+                                    <div class="col-md-2">
+                                        User
+                                    </div>
+                                    <div class="col-md-2">
+                                        Answer
+                                    </div>
+                                    <div class="col-md-2">
+                                        Result
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" v-for="bet in betData" style="padding-bottom: 20px;">
+                                <div class="col-md-6">
+                                    {{ bet.description }}
+                                </div>
+                                <div class="col-md-2" v-html="formatAnswer(bet, true) ">
+                                </div>
+                                <div class="col-md-2" v-html="formatAnswer(bet, false)">
+                                </div>
+                                <div class="col-md-2">
+                                    Placed: {{ bet.credits_placed }} <br/>
+                                    Outcome: {{ bet.won ? "Won" : "Lost" }} <br/>
+                                    Result: {{ bet.won ? "+" + bet.credits_won : "-" + bet.credits_placed }}
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -97,9 +133,7 @@ export default {
     methods: {
         getMatchData: function(id) {
             this.$http.get('/api/match?match_id=' + id).then(response => {
-                console.log(response.data);
                 this.matchData = response.data;
-                this.matchFetched = true;
                 this.setCurrentGame(response.data);
             }).catch(function (error) {
                 console.log(error);
@@ -117,6 +151,10 @@ export default {
                 }
             }
 
+            if(matchData.state == "resolved") {
+                gameNum = 1;
+            }
+
             this.changeGame(gameNum);
         },
 
@@ -132,10 +170,13 @@ export default {
                         number: gameNum,
                         name: game.name,
                         apiGameId: game.api_game_id,
+                        video: this.gameVideo(gameNum),
                     };
                     break;
                 }
             }
+
+            this.matchFetched = true;
 
             if(this.shared.user.loggedIn) {
                 this.getGameBet(this.currentGame.apiGameId);
@@ -150,6 +191,45 @@ export default {
                 console.log(error);
             });
         },
+
+        formatAnswer: function(bet, userAnswer) {
+
+            let value = (userAnswer ? bet.user_answer : bet.answer);
+
+            if(bet.type == "time_duration") {
+                let minutes = Math.floor(value / 60);
+                let seconds = value - minutes * 60;
+
+                if (minutes < 10) {minutes = "0"+minutes;}
+                if (seconds < 10) {seconds = "0"+seconds;}
+
+                return minutes + ":" + seconds;
+            }
+
+            if(bet.type == "team_id") {
+                return "<img style='width: 50px; height: 50px;' src='" + value.logo_url + "'>";
+            }
+
+            if(bet.type == "integer") {
+                return value;
+            }
+        },
+
+        gameVideo: function (gameNum) {
+            if(gameNum == 1 && this.matchData.state == 'unresolved') {
+                return null;
+            } else if(gameNum == 1) {
+                return (this.matchData.game_one.videos ? this.matchData.game_one.videos[0].source : null);
+            } else if(gameNum == 2) {
+                return (this.matchData.game_two.videos ? this.matchData.game_two.videos[0].source : null);
+            } else if(gameNum == 3) {
+                return (this.matchData.game_three.videos ? this.matchData.game_three.videos[0].source : null);
+            } else if(gameNum == 4) {
+                return (this.matchData.game_four.videos ? this.matchData.game_four.videos[0].source : null);
+            } else if(gameNum == 5) {
+                return (this.matchData.game_five.videos ? this.matchData.game_five.videos[0].source : null);
+            }
+        }
     },
 }
 </script>
