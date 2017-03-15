@@ -249,6 +249,31 @@ class LeaderboardsController extends Controller
         return $this->response->array($response);
     }
 
+    // Get a leaderboard by start and end
+    public function leaderboards_signedin(Request $request)
+    {
+        $json = json_decode($this->leaderboards($request)->content());
+
+        dd($this->auth->user()->facebook_id);
+
+        $first = DB::table('friends')
+                ->select('friend_two')
+                ->where('friend_one', $this->auth->user()->id);
+
+        $friends = DB::table('friends')
+                ->select('friend_one')
+                ->where('friend_two', $this->auth->user()->id)
+                ->union($first)
+                ->get();
+
+        dd($friends);
+        foreach ($json->users as $user) {
+            dd($user);
+        }
+        dd($this->auth->user()->credits);
+
+    }
+
     // Get a users rank in a leaderboard with ties
     public function userRank($board, $userId)
     {

@@ -16,7 +16,6 @@ $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', ['middleware' => 'jwt'], function ($api) 
 {
     $api->post('auth/facebook', 'App\Http\Controllers\Facebook\FacebookController@facebook');
-    $api->post('auth/test', 'App\Http\Controllers\Facebook\FacebookController@add_friends');
 
     $api->get('schedule', 'App\Http\Controllers\Queries\ScheduleController@query');
     $api->get('match', 'App\Http\Controllers\Queries\MatchDetailsController@query');
@@ -37,5 +36,7 @@ $api->version('v1', ['middleware' => 'jwt'], function ($api)
         $api->post('cards/create', 'App\Http\Controllers\Queries\CardController@generate');
         $api->get('subscribe/check', 'App\Http\Controllers\Subscriptions\SubscriptionsController@checkSubscription');
         $api->get('subscribe/modify', 'App\Http\Controllers\Subscriptions\SubscriptionsController@modifySubcription');
+        $api->get('leaderboards/signedin', 'App\Http\Controllers\Leaderboards\LeaderboardsController@leaderboards_signedin');
+        $api->post('auth/test', 'App\Http\Controllers\Facebook\FacebookController@add_friends');
     });
 });

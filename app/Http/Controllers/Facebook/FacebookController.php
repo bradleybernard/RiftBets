@@ -15,10 +15,9 @@ use Redis;
 class FacebookController extends Controller
 {
     // Login/register a user by Facebook
-    public function add_friends(Request $request)
+    public function add_friends($accessToken)
     {
         $fb = app(\SammyK\LaravelFacebookSdk\LaravelFacebookSdk::class);
-        $accessToken = $request['facebook_access_token'];
 
         try {
             $user = $fb->get('/me?fields=id,name,email', $accessToken);
