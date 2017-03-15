@@ -2,6 +2,8 @@
 
 @section('content')
 <div class="container">
-    {{-- vue component here --}}
+    <leader-board
+        leaderboard="weekly_wins" 
+    ></leader-board>
 </div>
 @endsection

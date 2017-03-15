@@ -19,6 +19,7 @@ Vue.component('navbar', require('./components/Navbar.vue'));
 Vue.component('game-schedule', require('./components/Schedule.vue'));
 Vue.component('game-bets', require('./components/GameBets.vue'));
 Vue.component('game-display', require('./components/GameDisplay.vue'));
+Vue.component('leader-board', require('./components/LeaderBoard.vue'));
 
 const app = new Vue({
     el: '#app',
