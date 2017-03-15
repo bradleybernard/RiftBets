@@ -31,6 +31,7 @@ class FacebookController extends Controller
         $userID = $userNode->getId();
 
         $friends = $friends->getGraphEdge();
+        // dd($friends);
 
         foreach ($friends as $graphNode) {
             $friendID = $graphNode->asArray()['id'];
