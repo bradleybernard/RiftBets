@@ -38,6 +38,10 @@ Route::get('/leaderboard', function () {
     return view('leaderboard');
 });
 
+Route::get('/bet', function () {
+    return view('bet');
+});
+
 Route::get('/clear', 'Bets\BetsController@clear');
 
 //Delete soon plz
@@ -46,4 +50,5 @@ Route::get('/test', 'TestBroadcastController@test');
 Route::get('/streams', 'Scrape\StreamsController@scrape');
 Route::get('/event', 'Queries\GameEventsController@query');
 Route::get('/leaderboards/setup', 'Leaderboards\LeaderboardsController@setupTable');
+Route::get('/stats', 'Scrape\StatsController@scrape');
 
