@@ -24,120 +24,124 @@
             </br>
             </br>
         </div>
-        <div class="row" style="margin-bottom: 20px;">
-            <div class="col-md-4">
-                Question
+        <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row" style="margin-bottom: 20px;">
+                <div class="col-md-4">
+                    Question
+                </div>
+                <div class="col-md-4">
+                    Answer
+                </div>
+                <div class="col-md-3">
+                    Credits Placed
+                </div>
+                <div class="col-md-1">
+                    Multiplier
+                </div>
             </div>
-            <div class="col-md-4">
-                Answer
-            </div>
-            <div class="col-md-3">
-                Credits Placed
-            </div>
-            <div class="col-md-1">
-                Multiplier
+            <div class="row" v-for="question in betData.questions" style="padding-bottom: 20px;">
+                <div class="col-md-4">
+                    {{ question.description }}
+                </div>
+                <div class="col-md-4">  <!-- v-html="formatAnswer(question)" -->           
+                    <select v-if="question.type == 'team_id'" :selected="betData.teams['100'].name">
+                        <option v-for="_team in betData.teams" v-bind:value="_team.id">
+                            {{ _team.name }}
+                        </option>
+                    </select>      
+                    <select v-if="question.type == 'champion_id'" :selected="betData.champions[0].champion_name">
+                        <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
+                            {{ _champ.champion_name }}
+                        </option>
+                    </select>   
+                    <select v-if="question.type == 'boolean'" :selected="true">
+                        <option v-bind:value="1">True</option>
+                        <option v-bind:value="0">False</option>
+                    </select>
+                    <input v-if="question.type == 'integer'" type="text" name="question.question_id">  
+                    <input v-if="question.type == 'time_duration'" type="text" name="question.question_id">                  
+                    <span v-if="question.type == 'summoner_id_list'">
+                        <select :selected="betData.summmoners[0].summoner_name">
+                            <option v-for="_sums in betData.summmoners" v-bind:value="_sums.api_id">
+                                {{ _sums.summoner_name }}
+                            </option>
+                        </select>  
+                        <select :selected="betData.summmoners[0].summoner_name">
+                            <option v-for="_sums in betData.summmoners" v-bind:value="_sums.api_id">
+                                {{ _sums.summoner_name }}
+                            </option>
+                        </select> 
+                    </span>    
+                    <span v-if="question.type == 'champion_id_list_5'">  
+                        <select :selected="betData.champions[0].champion_name">
+                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
+                                {{ _champ.champion_name }}
+                            </option>
+                        </select> 
+                        <select :selected="betData.champions[0].champion_name">
+                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
+                                {{ _champ.champion_name }}
+                            </option>
+                        </select> 
+                        <select :selected="betData.champions[0].champion_name">
+                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
+                                {{ _champ.champion_name }}
+                            </option>
+                        </select> 
+                        <select :selected="betData.champions[0].champion_name">
+                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
+                                {{ _champ.champion_name }}
+                            </option>
+                        </select> 
+                        <select :selected="betData.champions[0].champion_name">
+                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
+                                {{ _champ.champion_name }}
+                            </option>
+                        </select> 
+                    </span>   
+                    <span v-if="question.type == 'item_id_list'">
+                        <select :selected="betData.items[0].item_name">
+                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
+                                {{ _item.item_name }}
+                            </option>
+                        </select>  
+                        <select :selected="betData.items[0].item_name">
+                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
+                                {{ _item.item_name }}
+                            </option>
+                        </select>  
+                        <select :selected="betData.items[0].item_name">
+                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
+                                {{ _item.item_name }}
+                            </option>
+                        </select>  
+                        <select :selected="betData.items[0].item_name">
+                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
+                                {{ _item.item_name }}
+                            </option>
+                        </select>  
+                        <select :selected="betData.items[0].item_name">
+                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
+                                {{ _item.item_name }}
+                            </option>
+                        </select>  
+                        <select :selected="betData.items[0].item_name">
+                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
+                                {{ _item.item_name }}
+                            </option>
+                        </select>  
+                    </span>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="fname">
+                </div>
+                <div class="col-md-1">
+                    {{ question.multiplier }}
+                    <!-- {{ multiplier[question.question_id] }} -->
+                </div>
             </div>
         </div>
-        <div class="row" v-for="question in betData.questions" style="padding-bottom: 20px;">
-            <div class="col-md-4">
-                {{ question.description }}
-            </div>
-            <div class="col-md-4">  <!-- v-html="formatAnswer(question)" -->           
-                <select v-if="question.type == 'team_id'" :selected="betData.teams['100'].name">
-                    <option v-for="_team in betData.teams" v-bind:value="_team.id">
-                        {{ _team.name }}
-                    </option>
-                </select>      
-                <select v-if="question.type == 'champion_id'" :selected="betData.champions[0].champion_name">
-                    <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                        {{ _champ.champion_name }}
-                    </option>
-                </select>   
-                <select v-if="question.type == 'boolean'" :selected="true">
-                    <option v-bind:value="1">True</option>
-                    <option v-bind:value="0">False</option>
-                </select>
-                <input v-if="question.type == 'integer'" type="text" name="question.question_id">  
-                <input v-if="question.type == 'time_duration'" type="text" name="question.question_id">                  
-                <span v-if="question.type == 'summoner_id_list'">
-                    <select :selected="betData.summmoners[0].summoner_name">
-                        <option v-for="_sums in betData.summmoners" v-bind:value="_sums.api_id">
-                            {{ _sums.summoner_name }}
-                        </option>
-                    </select>  
-                    <select :selected="betData.summmoners[0].summoner_name">
-                        <option v-for="_sums in betData.summmoners" v-bind:value="_sums.api_id">
-                            {{ _sums.summoner_name }}
-                        </option>
-                    </select> 
-                </span>    
-                <span v-if="question.type == 'champion_id_list_5'">  
-                    <select :selected="betData.champions[0].champion_name">
-                        <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                            {{ _champ.champion_name }}
-                        </option>
-                    </select> 
-                    <select :selected="betData.champions[0].champion_name">
-                        <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                            {{ _champ.champion_name }}
-                        </option>
-                    </select> 
-                    <select :selected="betData.champions[0].champion_name">
-                        <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                            {{ _champ.champion_name }}
-                        </option>
-                    </select> 
-                    <select :selected="betData.champions[0].champion_name">
-                        <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                            {{ _champ.champion_name }}
-                        </option>
-                    </select> 
-                    <select :selected="betData.champions[0].champion_name">
-                        <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                            {{ _champ.champion_name }}
-                        </option>
-                    </select> 
-                </span>   
-                <span v-if="question.type == 'item_id_list'">
-                    <select :selected="betData.items[0].item_name">
-                        <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                            {{ _item.item_name }}
-                        </option>
-                    </select>  
-                    <select :selected="betData.items[0].item_name">
-                        <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                            {{ _item.item_name }}
-                        </option>
-                    </select>  
-                    <select :selected="betData.items[0].item_name">
-                        <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                            {{ _item.item_name }}
-                        </option>
-                    </select>  
-                    <select :selected="betData.items[0].item_name">
-                        <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                            {{ _item.item_name }}
-                        </option>
-                    </select>  
-                    <select :selected="betData.items[0].item_name">
-                        <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                            {{ _item.item_name }}
-                        </option>
-                    </select>  
-                    <select :selected="betData.items[0].item_name">
-                        <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                            {{ _item.item_name }}
-                        </option>
-                    </select>  
-                </span>
-            </div>
-            <div class="col-md-3">
-                <input type="text" name="fname">
-            </div>
-            <div class="col-md-1">
-                {{ question.multiplier }}
-                <!-- {{ multiplier[question.question_id] }} -->
-            </div>
         </div>
         <button type="button" class="btn btn-default pull-right">Submit Bet</button>
     </div>
