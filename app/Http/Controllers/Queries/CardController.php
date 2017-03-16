@@ -71,7 +71,7 @@ class CardController extends Controller
                                 ->get()
                                 ->first();
 
-            if($numberRerolls->reroll_count == 3)
+            if($numberRerolls->reroll_count == 999)
                 throw new \Dingo\Api\Exception\ResourceException('Maximum rerolls reached.');
 
             // Increment reroll count in Database
