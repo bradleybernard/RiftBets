@@ -11,15 +11,17 @@
                 Score
             </div>
         </div>
-        <div class="row" v-for="user in LeaderBoard.users" style="padding-bottom: 20px;">
-            <div class="col-md-1">
-                {{ user.rank }}
-            </div>
-            <div class="col-md-3">
-                {{ user.name }}
-            </div>
-            <div class="col-md-8">
-                {{ user.stat }}
+        <div v-if="fetched == true">
+            <div class="row" v-for="user in data.users" style="padding-bottom: 20px;">
+                <div class="col-md-1">
+                    {{ user.rank }}
+                </div>
+                <div class="col-md-3">
+                    {{ user.name }}
+                </div>
+                <div class="col-md-8">
+                    {{ user.stat }}
+                </div>
             </div>
         </div>
     </div>
@@ -35,14 +37,16 @@ export default {
 
     data() {
         return {
-            LeaderBoard: null,
+            data: null,
+            fetched: false,
         };
     },
 
     methods: {
         getLeaderBoard: function(id) {
             this.$http.get('/api/leaderboards/signedin?leaderboard=' + id).then(response => {
-                this.LeaderBoard = response.data;
+                this.data = response.data;
+                this.fetched = true;
             }).catch(function (error) {
                 console.log(error);
             });

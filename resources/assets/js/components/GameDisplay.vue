@@ -19,7 +19,7 @@
                 <div class="col-md-12 col-lg-8 text-center">
                     <div class="btn-group" role="toolbar">
                         <button 
-                            v-for="gameNum in bestOf" 
+                            v-for="gameNum in bestOf"
                             :class="[currentGame.number == gameNum ? 'active' : '']" 
                             @click="changeGame(gameNum)" 
                             :disabled="gameNum > (matchData.score_one + matchData.score_two)"

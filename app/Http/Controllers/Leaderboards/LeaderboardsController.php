@@ -279,7 +279,7 @@ class LeaderboardsController extends Controller
         $friends = $friends->pluck('id')->toArray();
 
         // dd($userIds);
-        // dd($friends);
+        dd($friends);
 
         $desired = array_flip($userIds);
 

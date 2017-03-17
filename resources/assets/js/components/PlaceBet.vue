@@ -45,88 +45,38 @@
                     {{ question.description }}
                 </div>
                 <div class="col-md-4">  <!-- v-html="formatAnswer(question)" -->           
-                    <select v-if="question.type == 'team_id'" :selected="betData.teams['100'].name">
+                    <select v-if="question.type == 'team_id'" :selected="betData.teams['100'].name" v-model="question.answer">
                         <option v-for="_team in betData.teams" v-bind:value="_team.id">
                             {{ _team.name }}
                         </option>
                     </select>      
-                    <select v-if="question.type == 'champion_id'" :selected="betData.champions[0].champion_name">
+                    <select v-if="question.type == 'champion_id'" :selected="betData.champions[0].champion_name" v-model="question.answer">
                         <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                            {{ _champ.champion_name }}
+                            {{ _champ.champion_name }} {{ _champ.pick_scale }}
                         </option>
                     </select>   
-                    <select v-if="question.type == 'boolean'" :selected="true">
+                    <select v-if="question.type == 'boolean'" :selected="true" v-model="question.answer">
                         <option v-bind:value="1">True</option>
                         <option v-bind:value="0">False</option>
                     </select>
-                    <input v-if="question.type == 'integer'" type="text" name="question.question_id">  
-                    <input v-if="question.type == 'time_duration'" type="text" name="question.question_id">                  
+                    <input v-if="question.type == 'integer'" type="text" name="question.question_id" v-model="question.answer">  
+                    <input v-if="question.type == 'time_duration'" type="text" name="question.question_id" v-model="question.answer">
                     <span v-if="question.type == 'summoner_id_list'">
-                        <select :selected="betData.summmoners[0].summoner_name">
+                        <select :selected="betData.summmoners[0].summoner_name" multiple v-model="question.answer">
                             <option v-for="_sums in betData.summmoners" v-bind:value="_sums.api_id">
                                 {{ _sums.summoner_name }}
                             </option>
-                        </select>  
-                        <select :selected="betData.summmoners[0].summoner_name">
-                            <option v-for="_sums in betData.summmoners" v-bind:value="_sums.api_id">
-                                {{ _sums.summoner_name }}
-                            </option>
-                        </select> 
+                        </select>
                     </span>    
                     <span v-if="question.type == 'champion_id_list_5'">  
-                        <select :selected="betData.champions[0].champion_name">
+                        <select :selected="betData.champions[0].champion_name" multiple v-model="question.answer">
                             <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
                                 {{ _champ.champion_name }}
                             </option>
-                        </select> 
-                        <select :selected="betData.champions[0].champion_name">
-                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                                {{ _champ.champion_name }}
-                            </option>
-                        </select> 
-                        <select :selected="betData.champions[0].champion_name">
-                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                                {{ _champ.champion_name }}
-                            </option>
-                        </select> 
-                        <select :selected="betData.champions[0].champion_name">
-                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                                {{ _champ.champion_name }}
-                            </option>
-                        </select> 
-                        <select :selected="betData.champions[0].champion_name">
-                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                                {{ _champ.champion_name }}
-                            </option>
-                        </select> 
+                        </select>
                     </span>   
                     <span v-if="question.type == 'item_id_list'">
-                        <select :selected="betData.items[0].item_name">
-                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                                {{ _item.item_name }}
-                            </option>
-                        </select>  
-                        <select :selected="betData.items[0].item_name">
-                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                                {{ _item.item_name }}
-                            </option>
-                        </select>  
-                        <select :selected="betData.items[0].item_name">
-                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                                {{ _item.item_name }}
-                            </option>
-                        </select>  
-                        <select :selected="betData.items[0].item_name">
-                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                                {{ _item.item_name }}
-                            </option>
-                        </select>  
-                        <select :selected="betData.items[0].item_name">
-                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                                {{ _item.item_name }}
-                            </option>
-                        </select>  
-                        <select :selected="betData.items[0].item_name">
+                        <select :selected="betData.items[0].item_name" multiple v-model="question.answer">
                             <option v-for="_item in betData.items" v-bind:value="_item.api_id">
                                 {{ _item.item_name }}
                             </option>
@@ -134,11 +84,10 @@
                     </span>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="fname">
+                    <input type="text" v-model="question.credits">
                 </div>
                 <div class="col-md-1">
-                    {{ question.multiplier }}
-                    <!-- {{ multiplier[question.question_id] }} -->
+                    {{ multiplier[question.question_id] }}
                 </div>
             </div>
         </div>
@@ -152,7 +101,7 @@ export default {
     props: [],
 
     mounted() {
-        this.getBetInfo('106ba94f-1be5-42e1-8f0b-c7c52fba0930', 3, 1);
+        this.getBetInfo('106ba94f-1be5-42e1-8f0b-c7c52fba0930', 50, 1);
         this.getUserInfo(1);
     },
 
@@ -165,6 +114,7 @@ export default {
             multiplier: null,
             user: null,
             fetchedUser: null,
+
         };
     },
 
@@ -174,9 +124,10 @@ export default {
                 this.betData = response.data;
                 var question;
                 var array = {};
-                for (question in this.betData.questions){
-                    var index = String(question.question_id);
-                    array[index] = question.multiplier;
+                for (var i = 0; i < this.betData.questions.length; i++) {
+                    this.betData.questions[i]['answer'] = "";
+                    this.betData.questions[i]['credits'] = "";
+                    array[this.betData.questions[i].question_id] = this.betData.questions[i].multiplier;
                 }
                 this.multiplier = array;
                 this.fetched = true;
@@ -208,5 +159,9 @@ export default {
             return value;
         },
     },
+
+    submitAnswer: function() {
+
+    }
 }
 </script>
