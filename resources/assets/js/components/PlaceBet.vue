@@ -116,7 +116,7 @@ export default {
 
     methods: {
         fetch: function() {
-            this.getBetInfo(this.gameID, this.questionCount, $this.reroll);
+            this.getBetInfo(this.gameID, this.questionCount, this.reroll);
         },
         getBetInfo: function(gameID, questionCount, reroll) {
             this.$http.post('/api/cards/create?api_game_id='+ gameID +'&question_count=' + questionCount + (reroll ? '&reroll=1' : '')).then(response => {

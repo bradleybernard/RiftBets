@@ -406,7 +406,7 @@ class BetsController extends Controller
 		// dd($user);
 
 		$bets = DB::table('bets')
-					->where('bets.is_complete', true)
+					// ->where('bets.is_complete', true)
 					->where('bets.user_id', $user->id)
 					->where('bets.api_game_id', $game_id)
 					->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')

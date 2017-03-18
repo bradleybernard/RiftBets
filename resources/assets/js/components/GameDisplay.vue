@@ -131,7 +131,7 @@
                 </div>
             </div>
         </div>
-        <place-bet v-if="betFetched" v-on:gameSet="fetch" gameId="currentGame.apiGameId" questionCount="5" reroll="0"></place-bet>
+        <place-bet></place-bet>
     </div>
 </template>
 
@@ -201,7 +201,7 @@ export default {
             }
 
             this.matchFetched = true;
-            this.$emit('gameSet');
+            this.$children[0].getBetInfo(this.currentGame.apiGameId, 5, 0);
 
             if(this.shared.user.loggedIn) {
                 this.getGameBet(this.currentGame.apiGameId);
