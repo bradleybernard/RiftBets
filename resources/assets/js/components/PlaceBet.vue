@@ -98,26 +98,26 @@
 
 <script>
 export default {
-    props: [],
+    props: ['gameID', 'questionCount', 'reroll'],
 
     mounted() {
-        this.getBetInfo('7d8bf41d-0a60-4c2c-9898-863cf1eb2093', 5, 1);
+        // this.getBetInfo(this.gameID, this.questionCount, this.reroll);
     },
 
     data() {
         return {
-            gameID: null,
-            questionCount: null,
             betData: null,
-            fetched: false,
             multiplier: null,
             user: null,
+            fetched: false,
             fetchedUser: null,
-
         };
     },
 
     methods: {
+        fetch: function() {
+            this.getBetInfo(this.gameID, this.questionCount, $this.reroll);
+        },
         getBetInfo: function(gameID, questionCount, reroll) {
             this.$http.post('/api/cards/create?api_game_id='+ gameID +'&question_count=' + questionCount + (reroll ? '&reroll=1' : '')).then(response => {
                 this.betData = response.data;
