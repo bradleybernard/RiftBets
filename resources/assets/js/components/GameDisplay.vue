@@ -236,6 +236,38 @@ export default {
             if(bet.type == "integer") {
                 return value;
             }
+
+            if(bet.type == 'boolean') {
+                return (value == 1 ? "True" : "False");
+            }
+
+            if(bet.type == 'champion_id') {
+                return value.champion_name;
+            }
+
+            if(bet.type == 'champion_id_list_5') {
+                var ret = "";
+                for (const champ of value) {
+                    ret += champ.champion_name + " ";
+                }
+                return ret;
+            }
+
+            if(bet.type == 'item_id_list') {
+                var ret = "";
+                for (const item of value) {
+                    ret += item + " ";
+                }
+                return ret;
+            }
+
+            if(bet.type == 'summoner_id_list') {
+                var ret = "";
+                for (const item of value) {
+                    ret += item.name + " ";
+                }
+                return ret;
+            }
         },
 
         gameVideo: function (gameNum) {

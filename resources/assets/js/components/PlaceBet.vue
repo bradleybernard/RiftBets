@@ -46,7 +46,7 @@
                 </div>
                 <div class="col-md-4">  <!-- v-html="formatAnswer(question)" -->           
                     <select v-if="question.type == 'team_id'" :selected="betData.teams['100'].name" v-model="question.answer">
-                        <option v-for="_team in betData.teams" v-bind:value="_team.id">
+                        <option v-for="_team in betData.teams" v-bind:value="_team.match_team_id">
                             {{ _team.name }}
                         </option>
                     </select>      
@@ -92,7 +92,7 @@
             </div>
         </div>
         </div>
-        <button type="button" class="btn btn-default pull-right">Submit Bet</button>
+        <button @click="submitAnswer" type="button" class="btn btn-default pull-right">Submit Bet</button>
     </div>
 </template>
 
@@ -101,8 +101,7 @@ export default {
     props: [],
 
     mounted() {
-        this.getBetInfo('106ba94f-1be5-42e1-8f0b-c7c52fba0930', 50, 1);
-        this.getUserInfo(1);
+        this.getBetInfo('7d8bf41d-0a60-4c2c-9898-863cf1eb2093', 5, 1);
     },
 
     data() {
@@ -122,15 +121,18 @@ export default {
         getBetInfo: function(gameID, questionCount, reroll) {
             this.$http.post('/api/cards/create?api_game_id='+ gameID +'&question_count=' + questionCount + (reroll ? '&reroll=1' : '')).then(response => {
                 this.betData = response.data;
-                var question;
-                var array = {};
+                this.multiplier = {};
                 for (var i = 0; i < this.betData.questions.length; i++) {
-                    this.betData.questions[i]['answer'] = "";
-                    this.betData.questions[i]['credits'] = "";
-                    array[this.betData.questions[i].question_id] = this.betData.questions[i].multiplier;
+                    if(this.betData.questions[i].type == 'item_id_list') {
+                        console.log(this.betData.questions[i].answer);
+                    }
+                    this.betData.questions[i]['answer'] = null;
+                    this.betData.questions[i]['credits'] = 100;
+                    this.betData.questions[i]['api_game_id'] = gameID;
+                    this.multiplier[this.betData.questions[i].question_id] = this.betData.questions[i].multiplier;
                 }
-                this.multiplier = array;
                 this.fetched = true;
+                this.getUserInfo(this.betData.user_id);
             }).catch(function (error) {
                 console.log(error);
             });
@@ -143,25 +145,38 @@ export default {
                 console.log(error);
             });
         },
+        submitAnswer: function() {
 
-    formatAnswer: function(question) {
-
-            var value = 100;
-
-            if(question.type == "team_id") {
-                return "<img style='width: 50px; height: 50px;' src='" + this.betData.teams['100'].logo_url + "'><img style='width: 50px; height: 50px;' src='" + this.betData.teams['200'].logo_url + "'>";
+            console.log('submit');
+            var body = [];
+            for (var i = 0; i < this.betData.questions.length; i++) {
+                body.push({
+                    api_game_id: this.betData.questions[i].api_game_id,
+                    user_answer: this.flatten(this.betData.questions[i].answer),
+                    credits_placed: this.betData.questions[i].credits,
+                    question_slug: this.betData.questions[i].slug,
+                });
             }
 
-            if(question.type == "integer") {
-                return value;
-            }
+            console.log(body);
 
-            return value;
+            this.$http.post('/api/bets/create', {'bets': body, 'debug': true}).then(response => {
+                console.log(response.data);
+            }).catch(function (error) {
+                console.error(error);
+            });
         },
+        flatten: function(answer) {
+            if(Array.isArray(answer)) {
+                return answer.map(function(val) {
+                    return parseInt(val, 10);
+                }).sort(function (a, b) {
+                    return a - b;
+                }).join(',');
+            }
+
+            return answer;
+        }
     },
-
-    submitAnswer: function() {
-
-    }
 }
 </script>

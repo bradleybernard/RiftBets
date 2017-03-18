@@ -201,17 +201,18 @@ class BetsController extends Controller
 		$questions = [];
 
 		foreach ($request['bets'] as $bet) {
-			array_push($questions, $bet['question_slug']);
+			$questions[] = $bet['question_slug'];
 		}
 
-		$questionIds = DB::table('questions')->select('id')
+		$questionIds = DB::table('questions')->select(['id', 'slug'])
 						->whereIn('slug', $questions)
-						->get();
+						->get()
+						->keyBy('slug');
 
 		$details = [];
 
 		for ($i=0; $i < count($request['bets']); $i++) {
-			$details[$i]['question_id'] = $questionIds[$i]->id;
+			$details[$i]['question_id'] = $questionIds->get($request['bets'][$i]['question_slug'])->id;
 			$details[$i]['bet_id'] = $betId;
 			$details[$i]['user_answer'] = $request['bets'][$i]['user_answer'];
 			$details[$i]['credits_placed'] = $request['bets'][$i]['credits_placed'];

@@ -71,5 +71,7 @@ class ScrapeLoLEsports extends Command
 
         $this->info('DDragon scrape completed successfully!'); 
         // end ddragon
+
+        app()->make('App\Http\Controllers\Scrape\StatsController')->scrape();
     }
 }
