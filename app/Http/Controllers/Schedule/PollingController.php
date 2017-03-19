@@ -307,11 +307,14 @@ class PollingController extends ScrapeController
                 'game_type'     =>  $response->gameType
             ];
 
+            $gameName = DB::table('games')->where('game_id', $response->gameId)->first()->name;
+            $swapSides = substr($gameName, 1, 1) % 2 == 0;
+
             foreach ($response->teams as $team) 
             {
                 $teamStats[] = [
                     'game_id'               => $response->gameId,
-                    'team_id'               => $team->teamId,
+                    'team_id'               => $this->fixSide($swapSides, $team->teamId),
                     'win'                   => $this->parseWin($team->win),
                     'first_blood'           => $team->firstBlood,
                     'first_tower'           => $team->firstTower,
@@ -345,8 +348,8 @@ class PollingController extends ScrapeController
             {
                 $playerStats[] = [
                     'game_id'               => $response->gameId,
-                    'participant_id'        => $player->participantId,
-                    'team_id'               => $player->teamId,
+                    'participant_id'        => $this->fixParticipant($swapSides, $player->teamId, $player->participantId),
+                    'team_id'               => $this->fixSide($swapSides, $player->teamId),
                     'champion_id'           => $player->championId,
                     'role'                  => strtolower($player->timeline->role),
                     'lane'                  => strtolower($player->timeline->lane),
@@ -374,6 +377,8 @@ class PollingController extends ScrapeController
         DB::table('game_stats')->insert($gameStats);
         DB::table('game_team_stats')->insert($teamStats);
         DB::table('game_player_stats')->insert($playerStats);
+
+        $this->fixApiIds();
     }
 
     // Dispatch job to insert game answers for each game that is done
@@ -561,5 +566,82 @@ class PollingController extends ScrapeController
             // dispatch(new PushNotificationsForMatches($game));
             event(new GameCompleted($game));
         }
+    }
+
+    private function fixApiIds()
+    {
+        $columns = [
+            'matches.api_id_long', 'matches.api_resource_id_one', 'matches.api_resource_id_two', 'games.game_id'
+        ];
+
+        $matches = DB::table('matches')->select($columns)
+                        ->join('games', 'games.api_match_id', '=', 'matches.api_id_long')
+                        ->where('games.name', 'G1')
+                        ->get()
+                        ->keyBy('api_id_long');
+
+        foreach($matches as $match)
+        {
+            $game = DB::table('game_player_stats')->select('summoner_name')
+                        ->where('game_id', $match->game_id)
+                        ->where('participant_id', '1')
+                        ->get()
+                        ->first();
+
+            if(!$game)
+            {
+                continue;
+            }
+
+            $game = substr($game->summoner_name, 0, 3);
+
+            $name_one = DB::table('rosters')->select('rosters.name as team_name')
+                            ->where('api_id_long', $match->api_resource_id_one)
+                            ->get()
+                            ->first();
+
+            if (strlen($name_one->team_name) < 3)
+            {
+                $name_one->team_name = $name_one->team_name . ' ';
+            }
+
+            if($game == $name_one->team_name)
+            {
+                continue;       
+            } else
+            {
+                DB::table('matches')->where('api_id_long', $match->api_id_long)->update([
+                    'api_resource_id_one'   => $match->api_resource_id_two,
+                    'api_resource_id_two'   => $match->api_resource_id_one
+                ]);
+            }
+        }
+    }
+
+    //return team id once theyve switched sides
+    private function fixSide($swapSides, $teamId)
+    {
+        if($swapSides) {
+            if ($teamId == 100) {
+                return 200;
+            } else {
+                return 100;
+            }
+        }
+
+        return $teamId;
+    }
+
+    private function fixParticipant($swapSides, $teamId, $participant)
+    {
+        if($swapSides) {
+            if ($teamId == 100) {
+                return $participant + 5;
+            } else {
+                return $participant - 5;
+            }
+        }
+
+        return $participant;
     }
 }

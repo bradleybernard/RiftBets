@@ -277,7 +277,7 @@ class MatchDetailsController extends Controller
                 ];
             }
 
-            $item->player_stats = $teamOnePlayers[$item->game_id]->keyBy('participant_id')->all();
+            $item->player_stats = $teamOnePlayers[$item->game_id]->all();
             return $item;
         }); 
 
@@ -292,7 +292,7 @@ class MatchDetailsController extends Controller
                 ];
             }
 
-            $item->players_stats = $teamTwoPlayers[$item->game_id]->keyBy('participant_id')->all();
+            $item->player_stats = $teamTwoPlayers[$item->game_id]->all();
             return $item;
         });
 
@@ -303,7 +303,6 @@ class MatchDetailsController extends Controller
             'G4' => 'game_four',
             'G5' => 'game_five',
         ];
-
 
         // Create an array for each game played and insert into JSON
         foreach($allGames as $gameKey => $property) {
