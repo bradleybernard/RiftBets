@@ -1,107 +1,103 @@
 <template>
     <div class="place-bet" v-if="fetched == true">
-        <div v-if="fetchedUser == true"> 
-            <h1> Hi {{user.user_info.name }} </h1>
-            <h3> You have {{ user.user_info.credits }} credits to place your bet </h3>
-            </br>
-            </br>
-            </br>
-        </div>
-        <div class="row text-center" style="font-size: 25px; line-height: 75px;">
+        <!-- <div class="row" v-if="fetchedUser == true">
             <div class="col-xs-12">
-                <div class="col-xs-4 ">
-                    <img :src="betData.teams['100'].logo_url" style="width: 75px; height: 75px">
-                </div>
-                <div class="col-xs-4" style="line-height: 30px;">
-                    {{ betData.teams['100'].name }} 
-                    vs
-                    {{ betData.teams['200'].name }} 
-                </div>
-                <div class="col-xs-4">
-                    <img :src="betData.teams['200'].logo_url" style="width: 75px; height: 75px">
-                </div>
+                <h1> Hi {{user.user_info.name }} </h1>
+                <h3> You have {{ user.user_info.credits }} credits to place your bet </h3>
             </div>
-            </br>
-            </br>
-        </div>
-        <div class="panel panel-default">
-        <div class="panel-body">
-            <div class="row" style="margin-bottom: 20px;">
-                <div class="col-md-4">
-                    Question
-                </div>
-                <div class="col-md-4">
-                    Answer
-                </div>
-                <div class="col-md-3">
-                    Credits Placed
-                </div>
-                <div class="col-md-1">
-                    Multiplier
-                </div>
+        </div> -->
+        <div class="row text-center" style="font-size: 25px; line-height: 75px;">
+            <div class="col-xs-4 ">
+                <img :src="betData.teams['100'].logo_url" style="width: 75px; height: 75px">
             </div>
-            <div class="row" v-for="question in betData.questions" style="padding-bottom: 20px;">
-                <div class="col-md-4">
-                    {{ question.description }}
-                </div>
-                <div class="col-md-4">  <!-- v-html="formatAnswer(question)" -->           
-                    <select v-if="question.type == 'team_id'" :selected="betData.teams['100'].name" v-model="question.answer">
-                        <option v-for="_team in betData.teams" v-bind:value="_team.match_team_id">
-                            {{ _team.name }}
-                        </option>
-                    </select>      
-                    <select v-if="question.type == 'champion_id'" :selected="betData.champions[0].champion_name" v-model="question.answer">
-                        <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                            {{ _champ.champion_name }} {{ _champ.pick_scale }}
-                        </option>
-                    </select>   
-                    <select v-if="question.type == 'boolean'" :selected="true" v-model="question.answer">
-                        <option v-bind:value="1">True</option>
-                        <option v-bind:value="0">False</option>
-                    </select>
-                    <input v-if="question.type == 'integer'" type="text" name="question.question_id" v-model="question.answer">  
-                    <input v-if="question.type == 'time_duration'" type="text" name="question.question_id" v-model="question.answer">
-                    <span v-if="question.type == 'summoner_id_list'">
-                        <select :selected="betData.summmoners[0].summoner_name" multiple v-model="question.answer">
-                            <option v-for="_sums in betData.summmoners" v-bind:value="_sums.api_id">
-                                {{ _sums.summoner_name }}
-                            </option>
-                        </select>
-                    </span>    
-                    <span v-if="question.type == 'champion_id_list_5'">  
-                        <select :selected="betData.champions[0].champion_name" multiple v-model="question.answer">
-                            <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
-                                {{ _champ.champion_name }}
-                            </option>
-                        </select>
-                    </span>   
-                    <span v-if="question.type == 'item_id_list'">
-                        <select :selected="betData.items[0].item_name" multiple v-model="question.answer">
-                            <option v-for="_item in betData.items" v-bind:value="_item.api_id">
-                                {{ _item.item_name }}
-                            </option>
-                        </select>  
-                    </span>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" v-model="question.credits">
-                </div>
-                <div class="col-md-1">
-                    {{ multiplier[question.question_id] }}
-                </div>
+            <div class="col-xs-4" style="line-height: 30px;">
+                {{ betData.teams['100'].name }} 
+                vs
+                {{ betData.teams['200'].name }} 
+            </div>
+            <div class="col-xs-4">
+                <img :src="betData.teams['200'].logo_url" style="width: 75px; height: 75px">
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-md-4">
+                                Question
+                            </div>
+                            <div class="col-md-4">
+                                Answer
+                            </div>
+                            <div class="col-md-3">
+                                Credits Placed
+                            </div>
+                            <div class="col-md-1">
+                                Multiplier
+                            </div>
+                        </div>
+                        <div class="row" v-for="question in betData.questions" style="padding-bottom: 20px;">
+                            <div class="col-md-4">
+                                {{ question.description }}
+                            </div>
+                            <div class="col-md-4">  <!-- v-html="formatAnswer(question)" -->           
+                                <select v-if="question.type == 'team_id'" :selected="betData.teams['100'].name" v-model="question.answer">
+                                    <option v-for="_team in betData.teams" v-bind:value="_team.match_team_id">
+                                        {{ _team.name }}
+                                    </option>
+                                </select>      
+                                <select v-if="question.type == 'champion_id'" :selected="betData.champions[0].champion_name" v-model="question.answer">
+                                    <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
+                                        {{ _champ.champion_name }} {{ _champ.pick_scale }}
+                                    </option>
+                                </select>   
+                                <select v-if="question.type == 'boolean'" :selected="true" v-model="question.answer">
+                                    <option v-bind:value="1">True</option>
+                                    <option v-bind:value="0">False</option>
+                                </select>
+                                <input v-if="question.type == 'integer'" type="text" name="question.question_id" v-model="question.answer">  
+                                <input v-if="question.type == 'time_duration'" type="text" name="question.question_id" v-model="question.answer">
+                                <span v-if="question.type == 'summoner_id_list'">
+                                    <select :selected="betData.summmoners[0].summoner_name" multiple v-model="question.answer">
+                                        <option v-for="_sums in betData.summmoners" v-bind:value="_sums.api_id">
+                                            {{ _sums.summoner_name }}
+                                        </option>
+                                    </select>
+                                </span>    
+                                <span v-if="question.type == 'champion_id_list_5'">  
+                                    <select :selected="betData.champions[0].champion_name" multiple v-model="question.answer">
+                                        <option v-for="_champ in betData.champions" v-bind:value="_champ.api_id">
+                                            {{ _champ.champion_name }}
+                                        </option>
+                                    </select>
+                                </span>   
+                                <span v-if="question.type == 'item_id_list'">
+                                    <select :selected="betData.items[0].item_name" multiple v-model="question.answer">
+                                        <option v-for="_item in betData.items" v-bind:value="_item.api_id">
+                                            {{ _item.item_name }}
+                                        </option>
+                                    </select>  
+                                </span>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" v-model="question.credits">
+                            </div>
+                            <div class="col-md-1">
+                                {{ multiplier[question.question_id] }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button @click="submitAnswer" type="button" class="btn btn-default pull-right">Submit Bet</button>
+        <button @click="rerollCard" type="button" class="btn btn-warning pull-right">Reroll Card</button>
+        <button @click="submitAnswer" type="button" class="btn btn-primary pull-right">Submit Bet</button>
     </div>
 </template>
 
 <script>
 export default {
-
-    mounted() {
-        // this.getBetInfo(this.gameID, this.questionCount, this.reroll);
-    },
 
     data() {
         return {
@@ -110,26 +106,26 @@ export default {
             user: null,
             fetched: false,
             fetchedUser: null,
+            gameId: null,
+            questionCount: null,
+            reroll: null,
         };
     },
 
     methods: {
-        // reset: function() {
-        //     this.betData = null;
-        //     this.multiplier = null;
-        //     this.fetched = false;
-        //     this.fetchedUser = false;
-        //     this.user = null;
-        //     this.$forceUpdate();
-        // },
+        rerollCard: function() {
+            this.getBetInfo(this.gameId, this.questionCount, true);
+        },
         getBetInfo: function(gameID, questionCount, reroll) {
+
+            this.gameId = gameID;
+            this.questionCount = questionCount;
+            this.reroll = reroll;
+
             this.$http.post('/api/cards/create?api_game_id='+ gameID +'&question_count=' + questionCount + (reroll ? '&reroll=1' : '')).then(response => {
                 this.betData = response.data;
                 this.multiplier = {};
                 for (var i = 0; i < this.betData.questions.length; i++) {
-                    if(this.betData.questions[i].type == 'item_id_list') {
-                        console.log(this.betData.questions[i].answer);
-                    }
                     this.betData.questions[i]['answer'] = [];
                     this.betData.questions[i]['credits'] = 100;
                     this.betData.questions[i]['api_game_id'] = gameID;
@@ -161,7 +157,7 @@ export default {
                 });
             }
 
-            console.log(body);
+            // console.log(body);
 
             this.$http.post('/api/bets/create', {'bets': body, 'debug': true}).then(response => {
                 console.log(response.data);
