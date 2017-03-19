@@ -173,7 +173,9 @@ export default {
         listenForMatch: function(id) {
             Echo.channel('match.' + id)
                 .listen('GameCompleted', (e) => {
-                    console.log(e);
+                    if(this.shared.user.loggedIn) {
+                        this.getGameBet(this.currentGame.apiGameId);
+                    }
                 });
         },
         getMatchData: function(id) {
