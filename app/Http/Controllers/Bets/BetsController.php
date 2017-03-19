@@ -535,7 +535,7 @@ class BetsController extends Controller
 					}
 				}
 				$userList = explode(',', $bet->user_answer);
-				foreach ($summonerList as $summoner) {
+				foreach ($userList as $summoner) {
 					$summoners[] = $summoner;
 				}
 			}

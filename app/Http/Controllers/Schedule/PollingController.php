@@ -34,8 +34,9 @@ class PollingController extends ScrapeController
                     ->join('matches', 'matches.api_id_long', '=', 'schedule.api_match_id')
                     ->where('matches.state', 'unresolved')
                     ->whereNotNull('schedule.api_match_id')
-                    // ->where('schedule.scheduled_time', '<=', new Carbon('2016-10-16 22:00:00'))
-                    ->where('schedule.scheduled_time', '<=', Carbon::now())
+                    // Since scheduled time is an estimation, 
+                    // some games start before their time so add time to current time
+                    ->where('schedule.scheduled_time', '<=', Carbon::now()->addDays(1))
                     ->get();
 
         if(!$matches) {
@@ -58,6 +59,8 @@ class PollingController extends ScrapeController
             $league = json_decode((string)$league->getBody());
 
             foreach($matches->get($leagueId) as $match) {
+
+                // Log::info("Checking match: " . $match->api_match_id);
 
                 try {
                     $response = $this->client->request('GET', 'v2/highlanderMatchDetails?tournamentId='. $match->api_tournament_id .'&matchId=' . $match->api_match_id);
@@ -106,8 +109,6 @@ class PollingController extends ScrapeController
 
                 $this->updateGameAndMatchRows($league, $games);
 
-                $this->pushToSubscribers($games);
-
                 //check resolved to see if match is completed
                 //new function in polling controller sendPushNotificationsToSubscribers
                 //take in $games array then dispatch new job and notify people
@@ -115,6 +116,7 @@ class PollingController extends ScrapeController
                 $this->scrapeGamesDetails($games);
                 $this->scrapeGameTimelines($games);
 
+                $this->pushToSubscribers($games);
                 $this->queueGamesAnswers($games);
             }
         }
