@@ -61,25 +61,35 @@
                         height="500"
                         src="http://www.twitch.tv/lolesportslas/chat">
                     </iframe>
-                    <div v-else class="row">
-                        <div v-for="player in matchData['game_one']['team_one']['player_stats']" class="col-md-12">
-                            <div class="row">
-                                <img style="width: 30px; height: 30px;" :src="player.champion.image_url">
-                                <div class="col-md-8">
-                                {{ player.summoner_name }}
-                                {{ player.minions_killed }}
-                                {{ player.gold_earned }}<img style="width: 15px; height: 15px" src="https://files.stage.gg/statIcons/scoreboardicon_gold.png">
-                                {{ player.kills }} / {{ player.deaths }} / {{ player.assists }}
+                    <div v-else>
+                        <div v-for="team in ['team_one', 'team_two']">
+                            <div v-for="player in playerStats(team)" class="row">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <img style="width: 30px; height: 30px;" :src="player.champion.image_url">
+                                        </div>
+                                        <div class="col-md-8">
+                                            {{ player.summoner_name }}
+                                        </div>
+                                        <div class="col-md-3">
+                                            {{ player.minions_killed }}
+                                            {{ player.gold_earned }}<img style="width: 15px; height: 15px" src="https://files.stage.gg/statIcons/scoreboardicon_gold.png">
+                                            {{ player.kills }} / {{ player.deaths }} / {{ player.assists }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <img style="width: 25px; height: 25px;" v-if="player['item_0']" :src="player['item_0']['image_url']">
+                                            <img style="width: 25px; height: 25px;" v-if="player['item_1']" :src="player['item_1']['image_url']">
+                                            <img style="width: 25px; height: 25px;" v-if="player['item_2']" :src="player['item_2']['image_url']">
+                                            <img style="width: 25px; height: 25px;" v-if="player['item_3']" :src="player['item_3']['image_url']">
+                                            <img style="width: 25px; height: 25px;" v-if="player['item_4']" :src="player['item_4']['image_url']">
+                                            <img style="width: 25px; height: 25px;" v-if="player['item_5']" :src="player['item_5']['image_url']">
+                                            <img style="width: 25px; height: 25px;" v-if="player['item_6']" :src="player['item_6']['image_url']">
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <img style="width: 25px; height: 25px;" v-if="player['item_0']" :src="player['item_0']['image_url']">
-                                <img style="width: 25px; height: 25px;" v-if="player['item_1']" :src="player['item_1']['image_url']">
-                                <img style="width: 25px; height: 25px;" v-if="player['item_2']" :src="player['item_2']['image_url']">
-                                <img style="width: 25px; height: 25px;" v-if="player['item_3']" :src="player['item_3']['image_url']">
-                                <img style="width: 25px; height: 25px;" v-if="player['item_4']" :src="player['item_4']['image_url']">
-                                <img style="width: 25px; height: 25px;" v-if="player['item_5']" :src="player['item_5']['image_url']">
-                                <img style="width: 25px; height: 25px;" v-if="player['item_6']" :src="player['item_6']['image_url']">
                             </div>
                         </div>
                     </div>
@@ -141,6 +151,7 @@ export default {
 
     mounted() {
         this.getMatchData(this.match);
+        this.listenForMatch(this.match);
     },
 
     data() {
@@ -155,6 +166,12 @@ export default {
     },
 
     methods: {
+        listenForMatch: function(id) {
+            Echo.channel('match.' + id)
+                .listen('GameCompleted', (e) => {
+                    console.log(e);
+                });
+        },
         getMatchData: function(id) {
             this.$http.get('/api/match?match_id=' + id).then(response => {
                 this.matchData = response.data;
@@ -286,7 +303,20 @@ export default {
             } else if(gameNum == 5) {
                 return (this.matchData.game_five.videos ? this.matchData.game_five.videos[0].source : null);
             }
-        }
+        },
+
+        playerStats: function(team) {
+            let dict = {
+                1: "one",
+                2: 'two',
+                3: 'three',
+                4: 'four',
+                5: 'five',
+            };
+
+            var key = 'game_' + dict[this.currentGame.number];
+            return this.matchData[key][team].player_stats;
+        },
     },
 }
 </script>
