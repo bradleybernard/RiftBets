@@ -98,7 +98,6 @@
 
 <script>
 export default {
-    props: ['gameID', 'questionCount', 'reroll'],
 
     mounted() {
         // this.getBetInfo(this.gameID, this.questionCount, this.reroll);
@@ -115,9 +114,14 @@ export default {
     },
 
     methods: {
-        fetch: function() {
-            this.getBetInfo(this.gameID, this.questionCount, this.reroll);
-        },
+        // reset: function() {
+        //     this.betData = null;
+        //     this.multiplier = null;
+        //     this.fetched = false;
+        //     this.fetchedUser = false;
+        //     this.user = null;
+        //     this.$forceUpdate();
+        // },
         getBetInfo: function(gameID, questionCount, reroll) {
             this.$http.post('/api/cards/create?api_game_id='+ gameID +'&question_count=' + questionCount + (reroll ? '&reroll=1' : '')).then(response => {
                 this.betData = response.data;
@@ -126,7 +130,7 @@ export default {
                     if(this.betData.questions[i].type == 'item_id_list') {
                         console.log(this.betData.questions[i].answer);
                     }
-                    this.betData.questions[i]['answer'] = null;
+                    this.betData.questions[i]['answer'] = [];
                     this.betData.questions[i]['credits'] = 100;
                     this.betData.questions[i]['api_game_id'] = gameID;
                     this.multiplier[this.betData.questions[i].question_id] = this.betData.questions[i].multiplier;
@@ -147,7 +151,6 @@ export default {
         },
         submitAnswer: function() {
 
-            console.log('submit');
             var body = [];
             for (var i = 0; i < this.betData.questions.length; i++) {
                 body.push({

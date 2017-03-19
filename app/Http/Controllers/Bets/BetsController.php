@@ -171,7 +171,7 @@ class BetsController extends Controller
 			}
 
 			$prevGame = DB::table('game_mappings')->select('created_at')
-							->where('game_id', $matchGames[$gameName]->game_id)
+							->where('game_id', $matchGames[$prevGameName]->game_id)
 							->first();
 
 			$nextGame = Carbon::parse($prevGame->created_at);
@@ -483,13 +483,16 @@ class BetsController extends Controller
 		foreach ($bets as $bet) {
 			if($bet->type == 'champion_id') {
 				$ddragon['champion_id'] = true;
-				$champions[] = $bet->answer;
+				if($bet->is_complete) 
+					$champions[] = $bet->answer;
 				$champions[] = $bet->user_answer;
 			} else if($bet->type == 'champion_id_list_3') {
 				$ddragon['champion_id_list_3'] = true;
-				$championList = explode(',', $bet->answer);
-				foreach ($championList as $champ) {
-					$champions[] = $champ;
+				if($bet->is_complete) {
+					$championList = explode(',', $bet->answer);
+					foreach ($championList as $champ) {
+						$champions[] = $champ;
+					}
 				}
 				$userList = explode(',', $bet->user_answer);
 				foreach ($userList as $champ) {
@@ -498,10 +501,12 @@ class BetsController extends Controller
 
 			} else if($bet->type == 'champion_id_list_5') {
 				$ddragon['champion_id_list_5'] = true;
-				$championList = explode(',', $bet->answer);
-				// dd($championList);
-				foreach ($championList as $champ) {
-					$champions[] = $champ;
+				if($bet->is_complete) {
+					$championList = explode(',', $bet->answer);
+					// dd($championList);
+					foreach ($championList as $champ) {
+						$champions[] = $champ;
+					}
 				}
 				$userList = explode(',', $bet->user_answer);
 				foreach ($userList as $champ) {
@@ -510,9 +515,11 @@ class BetsController extends Controller
 
 			} else if($bet->type == 'item_id_list') {
 				$ddragon['item_id_list'] = true;
-				$itemList = explode(',', $bet->answer);
-				foreach ($itemList as $item) {
-					$items[] = $item;
+				if($bet->is_complete) {
+					$itemList = explode(',', $bet->answer);
+					foreach ($itemList as $item) {
+						$items[] = $item;
+					}
 				}
 				$userList = explode(',', $bet->user_answer);
 				foreach ($userList as $item) {
@@ -521,9 +528,11 @@ class BetsController extends Controller
 
 			} else if($bet->type == 'summoner_id_list') {
 				$ddragon['summoner_id_list'] = true;
-				$summonerList = explode(',', $bet->answer);
-				foreach ($summonerList as $summoner) {
-					$summoners[] = $summoner;
+				if($bet->is_complete) {
+					$summonerList = explode(',', $bet->answer);
+					foreach ($summonerList as $summoner) {
+						$summoners[] = $summoner;
+					}
 				}
 				$userList = explode(',', $bet->user_answer);
 				foreach ($summonerList as $summoner) {
@@ -564,17 +573,21 @@ class BetsController extends Controller
 		foreach ($bets as $bet) {
 			if($bet->type == 'team_id') {
 				$bet->user_answer = $teams->where('api_id_long', ($bet->user_answer == 100 ? $match->api_resource_id_one : $match->api_resource_id_two))->first();
-				$bet->answer = $teams->where('api_id_long', ($bet->answer == 100 ? $match->api_resource_id_one : $match->api_resource_id_two))->first();
+				if($bet->is_complete) 
+					$bet->answer = $teams->where('api_id_long', ($bet->answer == 100 ? $match->api_resource_id_one : $match->api_resource_id_two))->first();
 			} 
 
 			if($bet->type == 'champion_id') {
 				$bet->user_answer = $champions[$bet->user_answer];
-				$bet->answer = $champions[$bet->answer];
+				if($bet->is_complete) 
+					$bet->answer = $champions[$bet->answer];
 				
 			} if($bet->type == 'champion_id_list_3' || $bet->type == 'champion_id_list_5') {
-				$bet->answer = explode(',', $bet->answer);
-				for ($i = 0; $i < count($bet->answer); ++$i) {
-					$bet->answer[$i] = $champions[$bet->answer[$i]];
+				if($bet->is_complete) {
+					$bet->answer = explode(',', $bet->answer);
+					for ($i = 0; $i < count($bet->answer); ++$i) {
+						$bet->answer[$i] = $champions[$bet->answer[$i]];
+					}
 				}
 				$bet->user_answer = explode(',', $bet->user_answer);
 				for ($i = 0; $i < count($bet->user_answer); ++$i) {
@@ -582,9 +595,11 @@ class BetsController extends Controller
 				}
 
 			} if($bet->type == 'item_id_list') {
-				$bet->answer = explode(',', $bet->answer);
-				for ($i = 0; $i < count($bet->answer); ++$i) {
-					$bet->answer[$i] = $items[$bet->answer[$i]];
+				if($bet->is_complete) {
+					$bet->answer = explode(',', $bet->answer);
+					for ($i = 0; $i < count($bet->answer); ++$i) {
+						$bet->answer[$i] = $items[$bet->answer[$i]];
+					}
 				}
 				$bet->user_answer = explode(',', $bet->user_answer);
 				for ($i = 0; $i < count($bet->user_answer); ++$i) {
@@ -592,9 +607,11 @@ class BetsController extends Controller
 				}
 
 			} if($bet->type == 'summoner_id_list') {
-				$bet->answer = explode(',', $bet->answer);
-				for ($i = 0; $i < count($bet->answer); ++$i) {
-					$bet->answer[$i] = $summoners[$bet->answer[$i]];
+				if($bet->is_complete) {
+					$bet->answer = explode(',', $bet->answer);
+					for ($i = 0; $i < count($bet->answer); ++$i) {
+						$bet->answer[$i] = $summoners[$bet->answer[$i]];
+					}
 				}
 				$bet->user_answer = explode(',', $bet->user_answer);
 				for ($i = 0; $i < count($bet->user_answer); ++$i) {

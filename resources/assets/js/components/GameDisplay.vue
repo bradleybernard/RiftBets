@@ -22,7 +22,7 @@
                             v-for="gameNum in bestOf"
                             :class="[currentGame.number == gameNum ? 'active' : '']" 
                             @click="changeGame(gameNum)" 
-                            :disabled="gameNum > (matchData.score_one + matchData.score_two)"
+                            :disabled="gameNum > (matchData.score_one + matchData.score_two) + 10"
                             type="button" 
                             class="btn btn-default"
                         >Game {{ gameNum }}</button>
@@ -129,10 +129,14 @@
                                 </div>
                                 <div class="col-md-2" v-html="formatAnswer(bet, false)">
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2" v-if='betData[0].is_complete'>
                                     Placed: {{ bet.credits_placed }} <br/>
                                     Outcome: {{ bet.won ? "Won" : "Lost" }} <br/>
                                     Result: {{ bet.won ? "+" + bet.credits_won : "-" + bet.credits_placed }}
+                                </div>
+                                <div class="col-md-2" v-else>
+                                    Placed: {{ bet.credits_placed }} <br/>
+                                    Outcome: TBD
                                 </div>
                             </div>
 
@@ -180,7 +184,6 @@ export default {
                 console.log(error);
             });
         },
-
         setCurrentGame: function(matchData) {
             var games = ['game_one', 'game_two', 'game_three', 'game_four', 'game_five'];
             var gameNum = 1;
@@ -198,7 +201,6 @@ export default {
 
             this.changeGame(gameNum);
         },
-
         changeGame: function (gameNum) {
 
             this.betFetched = false;
@@ -224,7 +226,6 @@ export default {
                 this.getGameBet(this.currentGame.apiGameId);
             }
         },
-
         getGameBet: function (gameId) {
             this.$http.get('/api/bets/gamebet?api_game_id=' + gameId).then(response => {
                 this.betData = response.data;
@@ -233,10 +234,12 @@ export default {
                 console.log(error);
             });
         },
-
         formatAnswer: function(bet, userAnswer) {
 
             let value = (userAnswer ? bet.user_answer : bet.answer);
+            if(value == null) {
+                return null;
+            }
 
             if(bet.type == "time_duration") {
                 let minutes = Math.floor(value / 60);
@@ -288,23 +291,29 @@ export default {
                 return ret;
             }
         },
-
         gameVideo: function (gameNum) {
+            var path = null;
+
             if(gameNum == 1 && this.matchData.state == 'unresolved') {
                 return null;
             } else if(gameNum == 1) {
-                return (this.matchData.game_one.videos ? this.matchData.game_one.videos[0].source : null);
+                path = this.matchData.game_one;
             } else if(gameNum == 2) {
-                return (this.matchData.game_two.videos ? this.matchData.game_two.videos[0].source : null);
+                path = this.matchData.game_two;
             } else if(gameNum == 3) {
-                return (this.matchData.game_three.videos ? this.matchData.game_three.videos[0].source : null);
+                path = this.matchData.game_three;
             } else if(gameNum == 4) {
-                return (this.matchData.game_four.videos ? this.matchData.game_four.videos[0].source : null);
+                path = this.matchData.game_four;
             } else if(gameNum == 5) {
-                return (this.matchData.game_five.videos ? this.matchData.game_five.videos[0].source : null);
+                path = this.matchData.game_five;
             }
-        },
 
+            if(path == null) {
+                return null;
+            }
+
+            return (path.videos ? path.videos[0].source : null);
+        },
         playerStats: function(team) {
             let dict = {
                 1: "one",
