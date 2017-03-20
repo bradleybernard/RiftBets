@@ -15,58 +15,61 @@ class GameEventsController extends Controller
     {
     	$gameId = 1002080062;
 
-    	$gameEvents = DB::table('game_events')
-    					->where('game_id', $gameId)
-    					->where('type', 'champion_kill')
-    					->get();
-
         $events = (object) [];
+
+        $gamePlayers = DB::table('game_player_stats')->select(['participant_id', 'summoner_name'])
+                            ->where('game_id', $gameId)
+                            ->get()
+                            ->keyBy('participant_id'); 
        
-        $events->kills = $this->fetchKillEvents($gameId);
+        $events->kills = $this->fetchKillEvents($gameId, $gamePlayers);
 
-        $events->players = $this->fetchPlayerData($gameId);
+        $events->players = $this->fetchPlayerData($gameId, $gamePlayers);
 
-        $events->building_kills = $this->fetchBuildingKillEvents($gameId);
+        $events->building_kills = $this->fetchBuildingKillEvents($gameId, $gamePlayers);
 
         return $this->response->array((array)$events);
     }
 
-    public function fetchBuildingKillEvents($game_id)
+    public function fetchBuildingKillEvents($game_id, $gamePlayers)
     {
         $gameId = $game_id;
 
         $gameEvents = DB::table('game_events')
                         ->where('game_id', $gameId)
                         ->where('type', 'building_kill')
-                        ->get();   
+                        ->get();
+
+        $team1 = explode(' ',$gamePlayers[1]->summoner_name);
+        $team1 = $team1[0];
+
+        $team2 = explode(' ',$gamePlayers[6]->summoner_name);
+        $team2 = $team2[0];
+
+        $eventIds = [];
+
+        foreach($gameEvents as $event)
+        {
+            array_push($eventIds, $event->unique_id);
+        }
 
         $totalBuildingKills = [];
 
+        $masterDetails = DB::table('game_event_details')->select(['event_unique_id','key','value'])
+                            ->whereIn('event_unique_id', $eventIds)
+                            ->get()
+                            ->groupBy('event_unique_id');
+
         foreach ($gameEvents as $event) 
         {
-            $details = DB::table('game_event_details')->select(['key','value'])
-                            ->where('event_unique_id', $event->unique_id)
-                            ->get()
-                            ->keyBy('key');
-
-            $gamePlayers = DB::table('game_player_stats')->select(['participant_id', 'summoner_name'])
-                            ->where('game_id', $gameId)
-                            ->get()
-                            ->keyBy('participant_id');
+            $details = $masterDetails[$event->unique_id]->keyBy('key');
 
             $building = (object) [];
 
             $building->timestamp = $event->timestamp;
             $building->game_time = $this->milliToTime($event->timestamp);
-            $building->killer_id = $details['killer_id']->value;
             $building->killer_name = ($details['killer_id']->value == 0 ? 'Minions' : $gamePlayers[$details['killer_id']->value]->summoner_name);
-            $vicTeam = $this->findPlayerTeam($gamePlayers[($details['team_id']->value == 100 ? 1 : 6)]->summoner_name);
-            $building->victim_team = $vicTeam->name;
-            $building->victim_team_full = DB::table('teams')->select(['name'])
-                                                ->where('api_id', $vicTeam->api_team_id)
-                                                ->get()
-                                                ->first()
-                                                ->name;
+            $building->victim_team = ($details['team_id']->value == 100 ? $team1 : $team2);
             $building->building_type = $details['building_type']->value; 
             $building->lane_type = $details['lane_type']->value;
             $building->tower_type = $details['tower_type']->value;
@@ -77,7 +80,7 @@ class GameEventsController extends Controller
         return $totalBuildingKills;
     }
 
-    public function fetchPlayerData($game_id)
+    public function fetchPlayerData($game_id, $gamePlayers)
     {
         $gameId = $game_id;
 
@@ -86,11 +89,6 @@ class GameEventsController extends Controller
                         ->whereIn('type', ['item_purchased','item_sold'])
                         ->get();
 
-        $gamePlayers = DB::table('game_player_stats')->select(['participant_id', 'summoner_name'])
-                            ->where('game_id', $gameId)
-                            ->get()
-                            ->keyBy('participant_id');
-
         $participant = [];
 
         for ($i=1; $i <= 10; $i++) 
@@ -98,30 +96,39 @@ class GameEventsController extends Controller
             $player = (object) [];
             $player->participant_id = $i;
             $player->name = $gamePlayers[$i]->summoner_name;
-            $player->api_id = $this->findPlayerApiId($player->name);
             $player->purchase_history = [];
             $player->skill_order = [];
             array_push($participant, $player);
         }
 
+        $eventIds = [];
+
+        foreach($gameEvents as $event)
+        {
+            array_push($eventIds, $event->unique_id);
+        }
+
+        $masterDetails = DB::table('game_event_details')->select(['event_unique_id','key','value'])
+                            ->whereIn('event_unique_id', $eventIds)
+                            ->get()
+                            ->groupBy('event_unique_id');
+
+        $masterItems = DB::table('ddragon_items')->select(['api_id','name','image_url'])
+                        ->get()
+                        ->keyBy('api_id');
+
         foreach ($gameEvents as $event) 
         {
             $purchaseEvent = (object) [];
 
-            $details = DB::table('game_event_details')->select(['key','value'])
-                            ->where('event_unique_id', $event->unique_id)
-                            ->get()
-                            ->keyBy('key');
+            $details = $masterDetails[$event->unique_id]->keyBy('key');
 
             $purchaseEvent->type = $event->type;
             $purchaseEvent->timestamp = $event->timestamp;
             $purchaseEvent->game_time = $this->milliToTime($event->timestamp);
             $purchaseEvent->item_id = $details['item_id']->value;
             
-            $item = DB::table('ddragon_items')->select(['name','image_url'])
-                    ->where('api_id', $details['item_id']->value)
-                    ->get()
-                    ->first();
+            $item = $masterItems[$details['item_id']->value];
 
             $purchaseEvent->item_name = $item->name;
             $purchaseEvent->image_url = $item->image_url;
@@ -135,15 +142,24 @@ class GameEventsController extends Controller
                         ->where('type', 'skill_level_up')
                         ->get();
 
+        $eventIds = [];
+
+        foreach($gameEvents as $event)
+        {
+            array_push($eventIds, $event->unique_id);
+        }
+
+        $masterDetails = DB::table('game_event_details')->select(['event_unique_id','key','value'])
+                            ->whereIn('event_unique_id', $eventIds)
+                            ->get()
+                            ->groupBy('event_unique_id');
+
         foreach ($gameEvents as $event)
         {
 
             $skill = (object) [];
 
-            $details = DB::table('game_event_details')->select(['key','value'])
-                            ->where('event_unique_id', $event->unique_id)
-                            ->get()
-                            ->keyBy('key');
+            $details = $masterDetails[$event->unique_id]->keyBy('key');
 
             $skill->timestamp = $event->timestamp;
             $skill->game_time = $this->milliToTime($event->timestamp);
@@ -156,7 +172,7 @@ class GameEventsController extends Controller
         return $participant;
     }
 
-    public function fetchKillEvents($game_id)
+    public function fetchKillEvents($game_id, $gamePlayers)
     {
         $gameId = $game_id;
 
@@ -167,73 +183,40 @@ class GameEventsController extends Controller
 
         $kills = [];
 
+        $eventIds = [];
+
+        foreach($gameEvents as $event)
+        {
+            array_push($eventIds, $event->unique_id);
+        }
+
+        $masterDetails = DB::table('game_event_details')->select(['event_unique_id','key','value'])
+                            ->whereIn('event_unique_id', $eventIds)
+                            ->get()
+                            ->groupBy('event_unique_id');
+
         foreach ($gameEvents as $event) 
         {  
 
             $killEvent = (object) [];
 
-            $details = DB::table('game_event_details')->select(['key', 'value'])
-                        ->where('event_unique_id', $event->unique_id)
-                        ->get()
-                        ->keyBy('key');
-
-            $gamePlayers = DB::table('game_player_stats')->select(['participant_id', 'summoner_name'])
-                            ->where('game_id', $gameId)
-                            ->get()
-                            ->keyBy('participant_id');
+            $details = $masterDetails[$event->unique_id]->groupBy('key');
 
             $killEvent->unique_id = $event->unique_id;
             $killEvent->timestamp = $event->timestamp;
             $killEvent->game_time = $this->milliToTime($event->timestamp);
-            $killEvent->position_x = $details['position_x']->value;
-            $killEvent->position_y = $details['position_y']->value;
 
-            $killer = (object) [];
+            $killEvent->killer = $gamePlayers[$details['killer_id'][0]->value]->summoner_name;
 
-            $killer->killer_player = $gamePlayers[$details['killer_id']->value]->summoner_name;
-            $killer->killer_player_id =  $this->findPlayerApiId($killer->killer_player);
+            $killEvent->victim = $gamePlayers[$details['victim_id'][0]->value]->summoner_name;
 
-            $killTeam = $this->findPlayerTeam($killer->killer_player);
-            $killer->killer_team = $killTeam->name;
-            $killer->killer_team_full = DB::table('teams')->select(['name'])
-                                                ->where('api_id', $killTeam->api_team_id)
-                                                ->get()
-                                                ->first()
-                                                ->name;
-
-            $killEvent->killer = $killer;
-
-            $victim = (object) [];
-
-            $victim->victim_player = $gamePlayers[$details['victim_id']->value]->summoner_name;
-            $victim->victim_player_id = $this->findPlayerApiId($victim->victim_player);
-
-            $vicTeam = $this->findPlayerTeam($victim->victim_player);
-            $victim->victim_team = $vicTeam->name;
-            $victim->victim_team_full = DB::table('teams')->select(['name'])
-                                                ->where('api_id', $vicTeam->api_team_id)
-                                                ->get()
-                                                ->first()
-                                                ->name;
-
-            $killEvent->victim = $victim;
-
-            $assists = DB::table('game_event_details')->select(['key', 'value'])
-                        ->where('event_unique_id', $event->unique_id)
-                        ->where('key', 'assisting_participant_ids')
-                        ->get()
-                        ->toArray();
-
-            if($assists)
+            if($details->has('assisting_participant_ids'))
             {
                 $assistingPlayers = [];
 
-                foreach ($assists as $assist) 
+                foreach ($details['assisting_participant_ids'] as $assist) 
                 {
-                    $player = (object) [];
-                    $player->assisting_player = $gamePlayers[$assist->value]->summoner_name;
-                    $player->assisting_player_id = $this->findPlayerApiId($player->assisting_player);
-                    array_push($assistingPlayers, $player);
+                    array_push($assistingPlayers, $gamePlayers[$assist->value]->summoner_name);
                 }
                 $killEvent->assisting_players = $assistingPlayers;
             }
