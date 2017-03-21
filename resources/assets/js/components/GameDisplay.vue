@@ -149,6 +149,17 @@
             </div>
         </div>
         <place-bet></place-bet>
+        <div>
+            <h3> Recent Matches </h3>
+            <div class="row" v-if="matchFetched == true">
+                <div class="col-xs-6">
+                    <past-matches v-bind:api_res_id="matchData.api_resource_id_one"></past-matches>
+                </div>
+                <div class="col-xs-6">
+                    <past-matches v-bind:api_res_id="matchData.api_resource_id_two"></past-matches>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 

@@ -21,6 +21,7 @@ Vue.component('game-bets', require('./components/GameBets.vue'));
 Vue.component('game-display', require('./components/GameDisplay.vue'));
 Vue.component('leader-board', require('./components/LeaderBoard.vue'));
 Vue.component('place-bet', require('./components/PlaceBet.vue'));
+Vue.component('past-matches', require('./components/PastMatches.vue'));
 
 const app = new Vue({
     el: '#app',

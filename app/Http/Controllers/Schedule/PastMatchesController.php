@@ -118,30 +118,40 @@ class PastMatchesController extends Controller
         foreach ($all_matches as $match) {
 
             $team_one_wins = DB::table('games')
-            ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
-            ->where('games.api_match_id', '=', $match->api_id_long)
-            ->where('stats.team_id', '=', 100)
-            ->select(DB::raw('
-                sum(win) as sum
-                '))
-            ->get()
-            ->toArray();
+                ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
+                ->where('games.api_match_id', '=', $match->api_id_long)
+                ->where('stats.team_id', '=', 100)
+                ->select(DB::raw('
+                    sum(win) as sum
+                    '))
+                ->get()
+                ->toArray();
             $match->score_one = $team_one_wins[0]->sum;
 
             $team_two_wins = DB::table('games')
-            ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
-            ->where('games.api_match_id', '=', $match->api_id_long)
-            ->where('stats.team_id', '=', 200)
-            ->select(DB::raw('
-                sum(win) as sum
-                '))
-            ->get()
-            ->toArray();
+                ->join('game_team_stats as stats', 'games.game_id', '=', 'stats.game_id')
+                ->where('games.api_match_id', '=', $match->api_id_long)
+                ->where('stats.team_id', '=', 200)
+                ->select(DB::raw('
+                    sum(win) as sum
+                    '))
+                ->get()
+                ->toArray();
             $match->score_two = $team_two_wins[0]->sum;
 
         }
+
+        $team = DB::table('teams')
+                ->select('api_id', 'name', 'logo_url', 'acronym')
+                ->where('api_id', $teamID)
+                ->get();
+
+        $json = (object) [];
+        $json->matches = $all_matches->toArray();
+        $json->team = $team;
+        return $this->response->array((array)$json);
         // dd($all_matches);
-        return $this->response->array($all_matches->toArray());
+        // return $this->response->array($all_matches->toArray());
     }
 
 

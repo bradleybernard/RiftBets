@@ -18,8 +18,16 @@
             background-color: #2b2b2d;
             color: #fff;
         }
+
+        .panel {
+            background-color: #2b2b2d;
+            color: #fff;
+        }
         select {
-            color: #2b2b2d;
+            color: #000;
+        }
+        input {
+            color: #000;
         }
     </style>
 

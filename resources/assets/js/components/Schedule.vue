@@ -23,7 +23,7 @@
                     <h1>{{ key }}</h1>
                 </div>
             </div>
-            <div class="row" v-if="Number(match.block_label) == week && (match.league_id == league || league == 'all')"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
+            <div class="row text-center" v-if="Number(match.block_label) == week && (match.league_id == league || league == 'all')"  v-for="match in item" style="color: white; font-size: 25px; line-height: 75px;">
                 <div class="col-md-2 col-xs-12">
                     <span class="label label-default">{{ match.scheduled_time.substring(10,16) }}</span>
                 </div>
