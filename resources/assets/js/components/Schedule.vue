@@ -58,7 +58,6 @@ export default {
                 {text: 'All', value: 'all'},
                 {text: 'NA-LCS', value: 'na-lcs'},
                 {text: 'EU-LCS', value: 'eu-lcs'},
-                {text: 'LCK', value: 'lck'}
             ],
             week: this.getDate(new Date()),
             weeks: [

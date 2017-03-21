@@ -196,6 +196,8 @@ class BetsController extends Controller
 			'created_at'		=> \Carbon\Carbon::now(),
 		]);
 
+		DB::table('users')->where('id', $this->auth->user()->id)->update(['credits' => DB::raw('credits - ' . $sum)]);
+
 
 		//assemble and insert data into bet_details table
 		$questions = [];

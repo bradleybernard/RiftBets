@@ -8,7 +8,8 @@
                 <img class="center-block" style="width: 50px; height: 50px;" :src="match.team_one_logo">
             </div>
             <div class="col-md-4 text-center">
-                <h5>{{ match.score_one }} - {{ match.score_two }}</h5>
+                <h4>{{ match.score_one }} - {{ match.score_two }}</h4>
+                <span>{{ match.scheduled_time }}</span>
             </div>
             <div class="col-md-4">
                 <img class="center-block" style="width: 50px; height: 50px;" :src="match.team_two_logo">
