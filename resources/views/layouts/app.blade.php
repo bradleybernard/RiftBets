@@ -18,6 +18,7 @@
             background-color: #2b2b2d;
             color: #fff;
         }
+
         .panel {
             background-color: #2b2b2d;
             color: #fff;
