@@ -45,7 +45,7 @@
                         </iframe>
                         <iframe
                             v-else
-                            src="http://player.twitch.tv/?channel=lolesportslas" 
+                            src="http://player.twitch.tv/?channel=nalcs1" 
                             class="embed-responsive-item"
                             frameborder="0" 
                             scrolling="no"
@@ -59,7 +59,7 @@
                         scrolling="no" 
                         id="chat_embed" 
                         height="500"
-                        src="http://www.twitch.tv/lolesportslas/chat">
+                        src="http://www.twitch.tv/nalcs1/chat">
                     </iframe>
                     <div v-else>
                         <div v-for="team in ['team_one', 'team_two']">
