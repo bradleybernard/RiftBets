@@ -243,13 +243,17 @@ class LeaderboardsController extends Controller
         }
 
         ksort($sortedUsers);
-        $response['users'] = $sortedUsers;
+
+        $collection = collect($sortedUsers);
+        $sorted = $collection->sortBy('rank')->values();
+
+        $response['users'] = $sorted->toArray();
         $response['leaderboard'] = $board;
 
         return $this->response->array($response);
     }
 
-    // Get a leaderboard by start and end
+    // Get a leaderboard with all your friends
     public function leaderboards_signedin(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -315,7 +319,11 @@ class LeaderboardsController extends Controller
         }
 
         ksort($sortedUsers);
-        $response['users'] = $sortedUsers;
+
+        $collection = collect($sortedUsers);
+        $sorted = $collection->sortBy('rank')->values();
+
+        $response['users'] = $sorted->toArray();
         $response['leaderboard'] = $board;
 
         return $this->response->array($response);

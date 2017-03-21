@@ -1,12 +1,11 @@
 <template>
     <div class="place-bet" v-if="fetched == true">
-        <!-- <div class="row" v-if="fetchedUser == true">
+        <h3 v-if="fetchedUser == true"> You have {{ user.user_info.credits }} credits to place your bet </h3>
+<!--         <div class="row" v-if="fetchedUser == true">
             <div class="col-xs-12">
-                <h1> Hi {{user.user_info.name }} </h1>
-                <h3> You have {{ user.user_info.credits }} credits to place your bet </h3>
             </div>
         </div> -->
-        <div class="row text-center" style="font-size: 25px; line-height: 75px;">
+<!--         <div class="row text-center" style="font-size: 25px; line-height: 75px;">
             <div class="col-xs-4 ">
                 <img :src="betData.teams['100'].logo_url" style="width: 75px; height: 75px">
             </div>
@@ -18,7 +17,7 @@
             <div class="col-xs-4">
                 <img :src="betData.teams['200'].logo_url" style="width: 75px; height: 75px">
             </div>
-        </div>
+        </div> -->
         <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
@@ -91,8 +90,9 @@
                 </div>
             </div>
         </div>
-        <button @click="rerollCard" type="button" class="btn btn-warning pull-right">Reroll Card</button>
+         <h3 style="display: inline"> You have {{ betData.reroll_remaining }} Reroll's left </h3>
         <button @click="submitAnswer" type="button" class="btn btn-primary pull-right">Submit Bet</button>
+        <button v-if="betData.reroll_remaining > 0" @click="rerollCard" type="button" class="btn btn-warning pull-right">Reroll Card</button>
     </div>
 </template>
 
@@ -164,6 +164,8 @@ export default {
             }).catch(function (error) {
                 console.error(error);
             });
+
+            this.fetched = false;
         },
         flatten: function(answer) {
             if(Array.isArray(answer)) {

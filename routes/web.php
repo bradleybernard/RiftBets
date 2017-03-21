@@ -51,4 +51,5 @@ Route::get('/streams', 'Scrape\StreamsController@scrape');
 Route::get('/event', 'Queries\GameEventsController@query');
 Route::get('/leaderboards/setup', 'Leaderboards\LeaderboardsController@setupTable');
 Route::get('/stats', 'Scrape\StatsController@scrape');
+Route::get('/test', 'Schedule\GradingController@test');
 

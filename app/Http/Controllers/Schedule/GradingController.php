@@ -17,19 +17,19 @@ class GradingController extends Controller
 	public function grade()
 	{
 		DB::table('bets')
-		->where('bets.is_complete', false)
-		->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
-		->join('question_answers', function($join) {
-			$join->on('bet_details.question_id', '=', 'question_answers.question_id')
-					->whereColumn('question_answers.game_id', '=','bets.game_id');
-		})
-		->join('questions', 'questions.id', '=', 'question_answers.question_id')
-		->whereNotNull('bets.game_id')
-		->update([
-			'bet_details.credits_won'	=> DB::raw('IF(bet_details.user_answer = question_answers.answer, bet_details.credits_placed * questions.multiplier, 0)'),
-			'bet_details.is_complete'	=> true,
-			'bet_details.won'			=> DB::raw('IF(bet_details.user_answer = question_answers.answer, 1, 0)'),
-			'bet_details.answer_id'		=> DB::raw('question_answers.id'),
+			->where('bets.is_complete', false)
+			->join('bet_details', 'bet_details.bet_id', '=', 'bets.id')
+			->join('question_answers', function($join) {
+				$join->on('bet_details.question_id', '=', 'question_answers.question_id')
+						->whereColumn('question_answers.game_id', '=','bets.game_id');
+			})
+			->join('questions', 'questions.id', '=', 'question_answers.question_id')
+			->whereNotNull('bets.game_id')
+			->update([
+				'bet_details.credits_won'	=> DB::raw('IF(bet_details.user_answer = question_answers.answer, bet_details.credits_placed * questions.multiplier, 0)'),
+				'bet_details.is_complete'	=> true,
+				'bet_details.won'			=> DB::raw('IF(bet_details.user_answer = question_answers.answer, 1, 0)'),
+				'bet_details.answer_id'		=> DB::raw('question_answers.id'),
 		]);
 
 		DB::update('
@@ -37,11 +37,11 @@ class GradingController extends Controller
 			INNER JOIN bet_details ON bet_details.bet_id = bets.id
 			INNER JOIN users ON users.id = bets.user_id
 			SET bets.is_complete = 1,
-				bets.won = 
-					IF((SELECT SUM(bet_details.won) FROM bet_details where bet_id = bets.id) = bets.details_placed, 1, 0),
+				bets.won = (SELECT SUM(bet_details.won) FROM bet_details where bet_id = bets.id),
 				bets.credits_won = 
 					(SELECT SUM(bet_details.credits_won)FROM bet_details WHERE bet_id = bets.id)WHERE bets.is_complete = 0 AND bet_details.is_complete = 1'
 		);
+					// IF((SELECT SUM(bet_details.won) FROM bet_details where bet_id = bets.id) = bets.details_placed, 1, 0),
 
 		DB::table('bets')
 		->where('bets.is_counted', false)
@@ -50,17 +50,17 @@ class GradingController extends Controller
 		->update([
 			'bets.is_counted'				=> true,
 
-			'user_stats.bets_won' 			=> DB::raw('IF (bets.won = 1, user_stats.bets_won + 1, user_stats.bets_won)'),
-            'user_stats.bets_lost' 			=> DB::raw('IF (bets.won = 0, user_stats.bets_lost + 1, user_stats.bets_lost)'),
+			'user_stats.bets_won' 			=> DB::raw('user_stats.bets_won + bets.won'),
+            'user_stats.bets_lost' 			=> DB::raw('user_stats.bets_lost + (bets.details_placed - bets.won)'),
             'user_stats.bets_complete' 		=> DB::raw('user_stats.bets_complete + 1'),
 
-            'user_stats.weekly_streak' 		=> DB::raw('IF (bets.won = 1, user_stats.weekly_streak + 1, 0)'),
-            'user_stats.monthly_streak' 	=> DB::raw('IF (bets.won = 1, user_stats.monthly_streak + 1, 0)'),
-            'user_stats.alltime_streak' 	=> DB::raw('IF (bets.won = 1, user_stats.alltime_streak + 1, 0)'),
+            'user_stats.weekly_streak' 		=> DB::raw('IF (bets.won > 0, user_stats.weekly_streak + 1, 0)'),
+            'user_stats.monthly_streak' 	=> DB::raw('IF (bets.won > 0, user_stats.monthly_streak + 1, 0)'),
+            'user_stats.alltime_streak' 	=> DB::raw('IF (bets.won > 0, user_stats.alltime_streak + 1, 0)'),
 
-            'user_stats.weekly_wins' 		=> DB::raw('IF (bets.won = 1, user_stats.weekly_wins + 1, user_stats.weekly_wins)'),
-            'user_stats.monthly_wins' 		=> DB::raw('IF (bets.won = 1, user_stats.monthly_wins + 1, user_stats.monthly_wins)'),
-            'user_stats.alltime_wins' 		=> DB::raw('IF (bets.won = 1, user_stats.alltime_wins + 1, user_stats.alltime_wins)'),
+            'user_stats.weekly_wins' 		=> DB::raw('user_stats.weekly_wins + bets.won'),
+            'user_stats.monthly_wins' 		=> DB::raw('user_stats.monthly_wins + bets.won'),
+            'user_stats.alltime_wins' 		=> DB::raw('user_stats.alltime_wins + bets.won'),
             'user_stats.redis_update' 		=> 1,
 
 			'users.credits'					=> DB::raw('users.credits+bets.credits_won'),
@@ -169,4 +169,33 @@ class GradingController extends Controller
 
 		DB::table('bet_details')->insert($bets);
 	}
+
+
+	public function test() {
+
+		DB::table('bets')
+			->where('bets.is_counted', false)
+			->join('users', 'users.id', '=', 'bets.user_id')
+			->join('user_stats', 'user_stats.user_id', '=', 'users.id')
+			->update([
+				'bets.is_counted'				=> true,
+
+				'user_stats.bets_won' 			=> DB::raw('IF (bets.won = 1, user_stats.bets_won + 1, user_stats.bets_won)'),
+	            'user_stats.bets_lost' 			=> DB::raw('IF (bets.won = 0, user_stats.bets_lost + 1, user_stats.bets_lost)'),
+	            'user_stats.bets_complete' 		=> DB::raw('user_stats.bets_complete + 1'),
+
+	            'user_stats.weekly_streak' 		=> DB::raw('IF (bets.won = 1, user_stats.weekly_streak + 1, 0)'),
+	            'user_stats.monthly_streak' 	=> DB::raw('IF (bets.won = 1, user_stats.monthly_streak + 1, 0)'),
+	            'user_stats.alltime_streak' 	=> DB::raw('IF (bets.won = 1, user_stats.alltime_streak + 1, 0)'),
+
+	            'user_stats.weekly_wins' 		=> DB::raw('IF (bets.won = 1, user_stats.weekly_wins + 1, user_stats.weekly_wins)'),
+	            'user_stats.monthly_wins' 		=> DB::raw('IF (bets.won = 1, user_stats.monthly_wins + 1, user_stats.monthly_wins)'),
+	            'user_stats.alltime_wins' 		=> DB::raw('IF (bets.won = 1, user_stats.alltime_wins + 1, user_stats.alltime_wins)'),
+	            'user_stats.redis_update' 		=> 1,
+
+				'users.credits'					=> DB::raw('users.credits+bets.credits_won'),
+			]);
+		dispatch(new UpdateLeaderboards());
+	}
+
 }
