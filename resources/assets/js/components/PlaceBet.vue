@@ -19,7 +19,7 @@
                 <img :src="betData.teams['200'].logo_url" style="width: 75px; height: 75px">
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="color: #2b2b2d;">
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-body">

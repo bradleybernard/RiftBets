@@ -65,21 +65,21 @@
                         <div v-for="team in ['team_one', 'team_two']">
                             <div v-for="player in playerStats(team)" class="row">
                                 <div class="col-sm-12">
-                                    <div class="row">
+                                    <div class="row" style="padding-top: 5px">
                                         <div class="col-md-1">
                                             <img style="width: 30px; height: 30px;" :src="player.champion.image_url">
                                         </div>
                                         <div class="col-md-8">
                                             {{ player.summoner_name }}
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-3" style="padding: 0">
                                             {{ player.minions_killed }}
                                             {{ player.gold_earned }}<img style="width: 15px; height: 15px" src="https://files.stage.gg/statIcons/scoreboardicon_gold.png">
-                                            {{ player.kills }} / {{ player.deaths }} / {{ player.assists }}
+                                            
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-12">
+                                        <div class="col-sm-9">
                                             <img style="width: 25px; height: 25px;" v-if="player['item_0']" :src="player['item_0']['image_url']">
                                             <img style="width: 25px; height: 25px;" v-if="player['item_1']" :src="player['item_1']['image_url']">
                                             <img style="width: 25px; height: 25px;" v-if="player['item_2']" :src="player['item_2']['image_url']">
@@ -87,6 +87,9 @@
                                             <img style="width: 25px; height: 25px;" v-if="player['item_4']" :src="player['item_4']['image_url']">
                                             <img style="width: 25px; height: 25px;" v-if="player['item_5']" :src="player['item_5']['image_url']">
                                             <img style="width: 25px; height: 25px;" v-if="player['item_6']" :src="player['item_6']['image_url']">
+                                        </div>
+                                        <div class="col-sm-3" style="padding: 0">
+                                            {{ player.kills }} / {{ player.deaths }} / {{ player.assists }}
                                         </div>
                                     </div>
                                 </div>
@@ -97,7 +100,7 @@
             </div>
         </div>
 
-        <div class="game-bets" v-if="betFetched == true">
+        <div class="game-bets" v-if="betFetched == true" style= "color: #2b2b2d;">
             <div class="row" v-if="betData.length > 0">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
