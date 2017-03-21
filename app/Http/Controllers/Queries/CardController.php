@@ -36,184 +36,325 @@ class CardController extends Controller
 
         //Grabs user cards for this game.
         //Returns null if no cards
-        $checkCardExists = DB::table('cards')
-                                    ->where('user_id', $this->auth->user()->id)
-                                    ->where('api_game_id', $request->input('api_game_id'))
-                                    ->get()
-                                    ->first();
+        // $checkCardExists = DB::table('cards')
+        //             ->where('user_id', $this->auth->user()->id)
+        //             ->where('api_game_id', $request->input('api_game_id'))
+        //             ->first();
 
-        $create_new_card = true;
+        $cardExists = DB::table('cards')
+                ->where('user_id', $this->auth->user()->id)
+                ->where('api_game_id', $request->input('api_game_id'))
+                ->first();
 
-        if (!$request->input('reroll', false))
-        {   
-            if($checkCardExists) {
-                // Grabs current reroll count for game
-                $numberRerolls = DB::table('card_rerolls')->select('reroll_count')
-                                    ->where('user_id', $checkCardExists->user_id)
-                                    ->where('api_game_id', $checkCardExists->api_game_id)
-                                    ->get()
-                                    ->first();
+        $card = (object)[];
 
-                $create_new_card = false;
-                $numberRerolls = $numberRerolls->reroll_count;
-                $rerollRemaining = 3 - $numberRerolls;
-                // throw new \Dingo\Api\Exception\ResourceException('Card already exists. Please reroll.'); 
+        if(!$request->has('reroll') || ($request->has('reroll') && $request->input('reroll') == false)) {
+            // no reroll give their card or create one if they dont have one
+
+            if($cardExists) {
+                return $this->getCard($request, $card, $cardExists->id);
             }
-            else {
-                // Create a new row in card_rerolls with default data
-                DB::table('card_rerolls')->insert([
-                    'user_id'       => $this->auth->user()->id,
-                    'api_game_id'   => $request->input('api_game_id'),
-                    'reroll_count'  => 0,
-                    'created_at'    => Carbon::now()->toDateTimeString(),
-                    'updated_at'    => Carbon::now()->toDateTimeString(),
-                ]);
-                $numberRerolls = 0;
-                $rerollRemaining = 3;
+            
+            return $this->insertCard($request, $card, true);
+
+        } else if($request->has('reroll') && $request->input('reroll') == true) {
+            // they want reroll unless they are out they get their card back
+            // check if no card cant reroll nothing
+            if(!$cardExists) {
+                return $this->insertCard($request, $card, true);
             }
+
+            $rrCard = DB::table('card_rerolls')->where('user_id', $this->auth->user()->id)->where('api_game_id', $request->input('api_game_id'))->first();
+
+            if($rrCard->reroll_count >= 3) {
+                return $this->getCard($request, $card, $cardExists->id);
+            } else {
+                return $this->insertCard($request, $card, false);
+            }
+
         }
-        elseif ($request->input('reroll', false)) 
-        {
-            if(!$checkCardExists) {
-                // Create a new row in card_rerolls with default data
-                DB::table('card_rerolls')->insert([
-                    'user_id'       => $this->auth->user()->id,
-                    'api_game_id'   => $request->input('api_game_id'),
-                    'reroll_count'  => 0,
-                    'created_at'    => Carbon::now()->toDateTimeString(),
-                    'updated_at'    => Carbon::now()->toDateTimeString(),
-                ]);
-                $numberRerolls = 0;
-                $rerollRemaining = 3;
+
+        // if (!$request->has('reroll', false))
+        // {   
+        //     if($checkCardExists) {
+        //         // Grabs current reroll count for game
+        //         $numberRerolls = DB::table('card_rerolls')->select('reroll_count')
+        //                             ->where('user_id', $checkCardExists->user_id)
+        //                             ->where('api_game_id', $checkCardExists->api_game_id)
+        //                             ->first();
+        //                             // die(json_encode($numberRerolls));
+
+        //         $create_new_card = false;
+        //         $numberRerolls = $numberRerolls->reroll_count;
+        //         $rerollRemaining = 3 - $numberRerolls;
+        //         // throw new \Dingo\Api\Exception\ResourceException('Card already exists. Please reroll.'); 
+        //     }
+        //     else {
+        //         // Create a new row in card_rerolls with default data
+        //         DB::table('card_rerolls')->insert([
+        //             'user_id'       => $this->auth->user()->id,
+        //             'api_game_id'   => $request->input('api_game_id'),
+        //             'reroll_count'  => 0,
+        //             'created_at'    => Carbon::now()->toDateTimeString(),
+        //             'updated_at'    => Carbon::now()->toDateTimeString(),
+        //         ]);
+        //         $numberRerolls = 0;
+        //         $rerollRemaining = 3;
+        //     }
+        // }
+        // elseif ($request->input('reroll', false)) 
+        // {
+        //     if(!$checkCardExists) {
+        //         // Create a new row in card_rerolls with default data
+        //         DB::table('card_rerolls')->insert([
+        //             'user_id'       => $this->auth->user()->id,
+        //             'api_game_id'   => $request->input('api_game_id'),
+        //             'reroll_count'  => 0,
+        //             'created_at'    => Carbon::now()->toDateTimeString(),
+        //             'updated_at'    => Carbon::now()->toDateTimeString(),
+        //         ]);
+        //         $numberRerolls = 0;
+        //         $rerollRemaining = 3;
                 //throw new \Dingo\Api\Exception\ResourceException('Card does not exist. Please generate card.');
-            }
-            else {
-                // Grabs current reroll count for game
-                $numberRerolls = DB::table('card_rerolls')->select('reroll_count')
-                                    ->where('user_id', $checkCardExists->user_id)
-                                    ->where('api_game_id', $checkCardExists->api_game_id)
-                                    ->get()
-                                    ->first();
+        //     }
+        //     else {
+        //         // Grabs current reroll count for game
+        //         $numberRerolls = DB::table('card_rerolls')->select('reroll_count')
+        //                             ->where('user_id', $checkCardExists->user_id)
+        //                             ->where('api_game_id', $checkCardExists->api_game_id)
+        //                             ->get()
+        //                             ->first();
 
-                if($numberRerolls->reroll_count == 3) {
-                    $create_new_card = false;
-                    $numberRerolls = 3;
-                    $rerollRemaining = 0;
-                    // throw new \Dingo\Api\Exception\ResourceException('Maximum rerolls reached.');
-                }
-                else {
-                    // Increment reroll count in Database
-                    DB::table('card_rerolls')
-                        ->where('user_id', $checkCardExists->user_id)
-                        ->where('api_game_id', $checkCardExists->api_game_id)
-                        ->update([
-                            'reroll_count'  => DB::raw('reroll_count + 1'),
-                            'updated_at'    => Carbon::now()->toDateTimeString(),
-                        ]);
+        //         if($numberRerolls->reroll_count == 3) {
+        //             $create_new_card = false;
+        //             $numberRerolls = 3;
+        //             $rerollRemaining = 0;
+        //             // throw new \Dingo\Api\Exception\ResourceException('Maximum rerolls reached.');
+        //         }
+        //         else {
+        //             // Increment reroll count in Database
+        //             DB::table('card_rerolls')
+        //                 ->where('user_id', $checkCardExists->user_id)
+        //                 ->where('api_game_id', $checkCardExists->api_game_id)
+        //                 ->update([
+        //                     'reroll_count'  => DB::raw('reroll_count + 1'),
+        //                     'updated_at'    => Carbon::now()->toDateTimeString(),
+        //                 ]);
 
-                    // Increment reroll count for JSON
-                    $numberRerolls = $numberRerolls->reroll_count + 1;
+        //             // Increment reroll count for JSON
+        //             $numberRerolls = $numberRerolls->reroll_count + 1;
 
-                    $rerollRemaining = 3 - $numberRerolls;
+        //             $rerollRemaining = 3 - $numberRerolls;
 
 
-                    // Finds previous cards in DB and deletes them
-                    $oldCardId = DB::table('cards')->select('id')
-                                    ->where('user_id', $checkCardExists->user_id)
-                                    ->where('api_game_id', $checkCardExists->api_game_id)
-                                    ->get()
-                                    ->first();
+        //             // Finds previous cards in DB and deletes them
+        //             $oldCardId = DB::table('cards')->select('id')
+        //                             ->where('user_id', $checkCardExists->user_id)
+        //                             ->where('api_game_id', $checkCardExists->api_game_id)
+        //                             ->get()
+        //                             ->first();
 
-                    DB::table('cards')
-                        ->where('user_id', $checkCardExists->user_id)
-                        ->where('api_game_id', $checkCardExists->api_game_id)
-                        ->delete();
+        //             DB::table('cards')
+        //                 ->where('user_id', $checkCardExists->user_id)
+        //                 ->where('api_game_id', $checkCardExists->api_game_id)
+        //                 ->delete();
 
-                    DB::table('card_details')
-                        ->where('card_id', $oldCardId->id)
-                        ->delete();
-                }
-            }
-        }
+        //             DB::table('card_details')
+        //                 ->where('card_id', $oldCardId->id)
+        //                 ->delete();
+        //         }
+        //     }
+        // }
     		
 
-    	$card = (object) [];
-        if ($create_new_card) {
-            // Grabs all possible questions from DB
-            $questions = DB::table('questions')->select(['id as question_id', 'slug', 'difficulty','multiplier', 'type', 'description'])->get();
+    	// $card = (object) [];
+     //    if ($create_new_card) {
+     //        // Grabs all possible questions from DB
+     //        $questions = DB::table('questions')->select(['id as question_id', 'slug', 'difficulty','multiplier', 'type', 'description'])->get();
 
-            // Save and remove default question from potential question list
-            $defaultQuestion = $questions->get('1');
-            $questions->forget('1');
+     //        // Save and remove default question from potential question list
+     //        $defaultQuestion = $questions->get('1');
+     //        $questions->forget('1');
 
-            // If there is a question difficulty, select only that difficulty questions
-            if($request->input('difficulty', null) != null)
-            {
-                $questions = $questions->where('difficulty', $request->input('difficulty', null));
-            }
+     //        // If there is a question difficulty, select only that difficulty questions
+     //        if($request->input('difficulty', null) != null)
+     //        {
+     //            $questions = $questions->where('difficulty', $request->input('difficulty', null));
+     //        }
 
-            // Randomly pull the amount of questions
-            $questions = $questions->random($request->input('question_count'));
-        }
-        else {
+     //        // Randomly pull the amount of questions
+     //        $questions = $questions->random($request->input('question_count'));
+     //    }
+     //    else {
 
-            $defaultQuestion = false;
-            // Finds previous cards in DB
-            $oldCardId = DB::table('cards')->select('id')
-                            ->where('user_id', $checkCardExists->user_id)
-                            ->where('api_game_id', $checkCardExists->api_game_id)
-                            ->get()
-                            ->first();
+     //        $defaultQuestion = false;
+     //        // Finds previous cards in DB
+     //        $oldCardId = DB::table('cards')->select('id')
+     //                        ->where('user_id', $checkCardExists->user_id)
+     //                        ->where('api_game_id', $checkCardExists->api_game_id)
+     //                        ->get()
+     //                        ->first();
 
-            $questions = DB::table('card_details')
-                ->join('questions', 'card_details.question_id', '=', 'questions.id')
-                ->select(['questions.id as question_id', 'slug', 'difficulty','multiplier', 'type', 'description'])
-                ->where('card_details.card_id', $oldCardId->id)
-                ->get();               
-        }
+     //        $questions = DB::table('card_details')
+     //            ->join('questions', 'card_details.question_id', '=', 'questions.id')
+     //            ->select(['questions.id as question_id', 'slug', 'difficulty','multiplier', 'type', 'description'])
+     //            ->where('card_details.card_id', $oldCardId->id)
+     //            ->get();               
+     //    }
 
         // dd($questions);
 
+     //    $questions = $this->generateQuestions($request, $card, $questions, $defaultQuestion);
+
+    	// $card->user_id = $this->auth->user()->id;
+     //    $card->reroll_count = $numberRerolls;
+     //    $card->reroll_remaining = $rerollRemaining;
+    	// $card->questions = $questions;
+
+    	// $card->champions = DB::table('ddragon_champions')
+     //        ->join('math_stats', 'math_stats.api_id', '=', 'ddragon_champions.api_id')
+     //        ->select(['ddragon_champions.api_id', 'ddragon_champions.champion_name', 'ddragon_champions.image_url', 'math_stats.ban_scale', 'math_stats.pick_scale'])
+    	// 				->get()
+    	// 				->toArray();
+
+    	// $card->items = DB::table('ddragon_items')->select(['api_id', 'name as item_name', 'image_url'])
+    	// 				->get()
+    	// 				->toArray();
+
+    	// $card->summmoners = DB::table('ddragon_summoners')->select(['api_id', 'name as summoner_name', 'image_url'])
+    	// 				->get()
+    	// 				->toArray();
+
+     //    // Creates new game card and grabs the id
+    	// $cardId = DB::table('cards')->insertGetId([
+    	// 	'user_id'			=> $card->user_id,
+    	// 	'api_game_id'		=> $request->input('api_game_id'),
+    	// 	'details_placed'	=> $request->input('question_count'),
+    	// 	'created_at'		=> Carbon::now()->toDateTimeString(),
+    	// ]);
+
+     //    // Inserts every question card into the DB
+    	// foreach ($questions as $question)
+    	// {
+    	// 	DB::table('card_details')->insert([
+    	// 		'card_id'		=> $cardId,
+    	// 		'question_id'	=> $question->question_id,
+    	// 		'created_at'	=> Carbon::now()->toDateTimeString(),
+    	// 	]);
+    	// }
+
+    	// return $this->response->array((array)$card);
+    }
+
+    private function getCard($request, &$card, $cardId) {
+
+        $questions = DB::table('card_details')
+                                ->join('questions', 'card_details.question_id', '=', 'questions.id')
+                                ->select(['questions.id as question_id', 'slug', 'difficulty','multiplier', 'type', 'description'])
+                                ->where('card_details.card_id', $cardId)
+                                ->get();    
+
+        $rrCard = DB::table('card_rerolls')->where('user_id', $this->auth->user()->id)->where('api_game_id', $request->input('api_game_id'))->first();
+
+        return $this->makeCard($request, $card, $questions, false, $rrCard->reroll_count, false);
+    }
+
+    private function insertCard($request, &$card, $new) {
+        $questions = DB::table('questions')->select(['id as question_id', 'slug', 'difficulty','multiplier', 'type', 'description'])->get();
+
+        // Save and remove default question from potential question list
+        $defaultQuestion = $questions->get('1');
+        $questions->forget('1');
+
+        // If there is a question difficulty, select only that difficulty questions
+        if($request->has('difficulty'))
+        {
+            $questions = $questions->where('difficulty', $request->input('difficulty'));
+        }
+
+        // Randomly pull the amount of questions
+        $questions = $questions->random($request->input('question_count'));
+
+        if($new) {
+            DB::table('card_rerolls')->insert([
+                'user_id'       => $this->auth->user()->id,
+                'api_game_id'   => $request->input('api_game_id'),
+                'reroll_count'  => 0,
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
+            ]);
+        } else {
+            DB::table('card_rerolls')
+                ->where('user_id', $this->auth->user()->id)
+                ->where('api_game_id', $request->input('api_game_id'))
+                ->update([
+                    'reroll_count'  => DB::raw('reroll_count + 1'),
+                    'updated_at'    => Carbon::now(),
+                ]);
+
+            DB::table('card_details')
+                ->join('cards', 'cards.id', '=', 'card_details.card_id')
+                ->where('cards.user_id', $this->auth->user()->id)
+                ->where('cards.api_game_id', $request->input('api_game_id'))
+                ->delete();
+
+            DB::table('cards')
+                ->where('user_id', $this->auth->user()->id)
+                ->where('api_game_id', $request->input('api_game_id'))
+                ->delete();
+        }
+
+        $rrCount = DB::table('card_rerolls')
+                        ->where('user_id', $this->auth->user()->id)
+                        ->where('api_game_id', $request->input('api_game_id'))
+                        ->first();
+
+        return $this->makeCard($request, $card, $questions, $defaultQuestion, $rrCount->reroll_count, true);
+    }
+
+    private function makeCard($request, &$card, $questions, $defaultQuestion, $rrCount, $insert) {
         $questions = $this->generateQuestions($request, $card, $questions, $defaultQuestion);
 
-    	$card->user_id = $this->auth->user()->id;
-        $card->reroll_count = $numberRerolls;
-        $card->reroll_remaining = $rerollRemaining;
-    	$card->questions = $questions;
+        $card->user_id = $this->auth->user()->id;
+        $card->reroll_count = $rrCount;
+        $card->reroll_remaining = 3 - $rrCount;
+        $card->questions = $questions;
 
-    	$card->champions = DB::table('ddragon_champions')
+        $card->champions = DB::table('ddragon_champions')
             ->join('math_stats', 'math_stats.api_id', '=', 'ddragon_champions.api_id')
             ->select(['ddragon_champions.api_id', 'ddragon_champions.champion_name', 'ddragon_champions.image_url', 'math_stats.ban_scale', 'math_stats.pick_scale'])
-    					->get()
-    					->toArray();
+                        ->get()
+                        ->toArray();
 
-    	$card->items = DB::table('ddragon_items')->select(['api_id', 'name as item_name', 'image_url'])
-    					->get()
-    					->toArray();
+        $card->items = DB::table('ddragon_items')->select(['api_id', 'name as item_name', 'image_url'])
+                        ->get()
+                        ->toArray();
 
-    	$card->summmoners = DB::table('ddragon_summoners')->select(['api_id', 'name as summoner_name', 'image_url'])
-    					->get()
-    					->toArray();
+        $card->summmoners = DB::table('ddragon_summoners')->select(['api_id', 'name as summoner_name', 'image_url'])
+                        ->get()
+                        ->toArray();
 
-        // Creates new game card and grabs the id
-    	$cardId = DB::table('cards')->insertGetId([
-    		'user_id'			=> $card->user_id,
-    		'api_game_id'		=> $request->input('api_game_id'),
-    		'details_placed'	=> $request->input('question_count'),
-    		'created_at'		=> Carbon::now()->toDateTimeString(),
-    	]);
+        if($insert) {
+            // Creates new game card and grabs the id
+            $cardId = DB::table('cards')->insertGetId([
+                'user_id'           => $card->user_id,
+                'api_game_id'       => $request->input('api_game_id'),
+                'details_placed'    => $request->input('question_count'),
+                'created_at'        => Carbon::now()->toDateTimeString(),
+            ]);
 
-        // Inserts every question card into the DB
-    	foreach ($questions as $question)
-    	{
-    		DB::table('card_details')->insert([
-    			'card_id'		=> $cardId,
-    			'question_id'	=> $question->question_id,
-    			'created_at'	=> Carbon::now()->toDateTimeString(),
-    		]);
-    	}
+            // Inserts every question card into the DB
+            foreach ($questions as $question)
+            {
+                DB::table('card_details')->insert([
+                    'card_id'       => $cardId,
+                    'question_id'   => $question->question_id,
+                    'created_at'    => Carbon::now()->toDateTimeString(),
+                ]);
+            }
+        }
 
-    	return $this->response->array((array)$card);
+        return $this->response->array((array)$card);
     }
 
 

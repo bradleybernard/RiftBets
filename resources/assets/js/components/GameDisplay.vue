@@ -233,7 +233,6 @@ export default {
             }
 
             this.matchFetched = true;
-            this.$children[0].getBetInfo(this.currentGame.apiGameId, 5, 0);
 
             if(this.shared.user.loggedIn) {
                 this.getGameBet(this.currentGame.apiGameId);
@@ -242,6 +241,11 @@ export default {
         getGameBet: function (gameId) {
             this.$http.get('/api/bets/gamebet?api_game_id=' + gameId).then(response => {
                 this.betData = response.data;
+                if(this.betData.length == 0) {
+                    this.$children[0].getBetInfo(gameId, 5, 0);
+                } else {
+                    this.$children[0].toggleCard(true);
+                }
                 this.betFetched = true;
             }).catch(function (error) {
                 console.log(error);
@@ -283,7 +287,7 @@ export default {
             if(bet.type == 'champion_id_list_5') {
                 var ret = "";
                 for (const champ of value) {
-                    ret += champ.champion_name + " ";
+                    ret += champ.champion_name + ", ";
                 }
                 return ret;
             }
@@ -291,7 +295,7 @@ export default {
             if(bet.type == 'item_id_list') {
                 var ret = "";
                 for (const item of value) {
-                    ret += item + " ";
+                    ret += item.name + ", ";
                 }
                 return ret;
             }
@@ -299,7 +303,7 @@ export default {
             if(bet.type == 'summoner_id_list') {
                 var ret = "";
                 for (const item of value) {
-                    ret += item.name + " ";
+                    ret += item.name + ", ";
                 }
                 return ret;
             }

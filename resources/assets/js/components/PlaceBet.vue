@@ -1,23 +1,6 @@
 <template>
-    <div class="place-bet" v-if="fetched == true">
-        <h3 v-if="fetchedUser == true"> You have {{ user.user_info.credits }} credits to place your bet </h3>
-<!--         <div class="row" v-if="fetchedUser == true">
-            <div class="col-xs-12">
-            </div>
-        </div> -->
-<!--         <div class="row text-center" style="font-size: 25px; line-height: 75px;">
-            <div class="col-xs-4 ">
-                <img :src="betData.teams['100'].logo_url" style="width: 75px; height: 75px">
-            </div>
-            <div class="col-xs-4" style="line-height: 30px;">
-                {{ betData.teams['100'].name }} 
-                vs
-                {{ betData.teams['200'].name }} 
-            </div>
-            <div class="col-xs-4">
-                <img :src="betData.teams['200'].logo_url" style="width: 75px; height: 75px">
-            </div>
-        </div> -->
+    <div class="place-bet" v-if="fetched && !hideCard">
+        <h3 v-if="fetchedUser"> You have {{ user.user_info.credits }} credits to place your bet </h3>
         <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
@@ -109,12 +92,16 @@ export default {
             gameId: null,
             questionCount: null,
             reroll: null,
+            hideCard: true,
         };
     },
 
     methods: {
         rerollCard: function() {
             this.getBetInfo(this.gameId, this.questionCount, true);
+        },
+        toggleCard: function(toggle) {
+            this.hideCard = toggle;
         },
         getBetInfo: function(gameID, questionCount, reroll) {
 
@@ -132,6 +119,7 @@ export default {
                     this.multiplier[this.betData.questions[i].question_id] = this.betData.questions[i].multiplier;
                 }
                 this.fetched = true;
+                this.hideCard = false;
                 this.getUserInfo(this.betData.user_id);
             }).catch(function (error) {
                 console.log(error);
@@ -157,15 +145,18 @@ export default {
                 });
             }
 
+
+
             // console.log(body);
 
             this.$http.post('/api/bets/create', {'bets': body, 'debug': true}).then(response => {
-                console.log(response.data);
+                if( response.status == 200) {
+                    this.hideCard = true;
+                    this.$parent.getGameBet(this.gameId);
+                }
             }).catch(function (error) {
                 console.error(error);
             });
-
-            this.fetched = false;
         },
         flatten: function(answer) {
             if(Array.isArray(answer)) {
