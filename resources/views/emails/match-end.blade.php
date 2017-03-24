@@ -11,7 +11,7 @@
 	Check the game recap at RiftBets!
 @endif
 
-@component('mail::button', ['url' => ''])
+@component('mail::button', ['url' => 'http://riftbets.dev'])
 Go to RiftBets
 @endcomponent
 

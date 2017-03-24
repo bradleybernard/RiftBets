@@ -10,7 +10,7 @@ Betting for Game  is coming soon!
 
 Check last game stats or bet on Game {{$gameName + 1}} at Riftbets!
 
-@component('mail::button', ['url' => ''])
+@component('mail::button', ['url' => 'http://riftbets.dev'])
 Go to RiftBets
 @endcomponent
 

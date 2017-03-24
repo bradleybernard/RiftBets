@@ -11,7 +11,7 @@
 	It's not too late to bet! Bet on {{$teamOne}} vs {{$teamTwo}} and watch the game at Riftbets!
 @endif
 
-@component('mail::button', ['url' => ''])
+@component('mail::button', ['url' => 'http://riftbets.dev'])
 Go to RiftBets
 @endcomponent
 

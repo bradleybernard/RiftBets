@@ -7,7 +7,7 @@ Thank you for signing up for RiftBets!
 Thanks,<br>
 The {{ config('app.name') }} Team
 
-@component('mail::button', ['url' => ''])
+@component('mail::button', ['url' => 'riftbets.dev'])
 Go to RiftBets
 @endcomponent
 
