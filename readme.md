@@ -9,3 +9,10 @@ A JSON RESTful API carried over from a previous version of this project with an 
 - [Cindy Tiet](https://github.com/CinGer04/), kytiet@ucsc.edu
 - [Christopher Hsiao](https://github.com/chipsandtea/), chhsiao@ucsc.edu
 - [Daniel Lee](https://github.com/danielylee/), dle78@ucsc.edu
+
+### Screenshots
+![1](/Screenshots/1.png?raw=true "1")
+![2](/Screenshots/2.png?raw=true "2")
+![3](/Screenshots/3.png?raw=true "3")
+![4](/Screenshots/4.png?raw=true "4")
+![5](/Screenshots/5.png?raw=true "5")
